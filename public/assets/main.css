@@ -1,3 +1,10 @@
 .github-fork-ribbon.right-bottom:before {
   background-color: #222
 }
+
+*{
+    -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+    display: none;
+}

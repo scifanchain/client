@@ -55,7 +55,7 @@ export default function StageEditor (props) {
     const submitData = {
       title: stageTitle,
       content: stageContent,
-    }
+    };
 
     axios({
       headers: {
@@ -68,7 +68,7 @@ export default function StageEditor (props) {
       // console.log(response)
       history.push({
         pathname: '/stage/' + response.data.id,
-      })
+      });
       history.go();
       // console.log(response.data.refresh_token)
     }).catch(err => {

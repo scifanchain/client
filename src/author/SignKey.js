@@ -11,7 +11,6 @@ import axios from 'axios'
 
 
 function Main(){
-
     // 同步用户状态
     const [mnemonic, setMnemonic] = useRecoilState(mnemonicState);
 
@@ -58,6 +57,7 @@ function Main(){
                   <Table.Cell width={4}>
                     <strong>{author.username}</strong>
                   </Table.Cell>
+                  
                 </Table.Row>
                 {mnemonic &&
                   <Table.Row>
