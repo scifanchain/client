@@ -115,12 +115,12 @@ export function Main() {
   // 验证密码
   function validPassword() {
     if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/.test(
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,20}$/.test(
         password_ref.current
       )
     ) {
       setValidatePassword(
-        '密码至少8位，至少1个大写字母，1个小写字母和1个数字。'
+        '密码6-20位，至少包含1个大写字母，1个小写字母和1个数字。'
       );
       allow_password.current = false;
     } else {
@@ -157,7 +157,6 @@ export function Main() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     // 创建pair
     const mnemonic = mnemonicGenerate();
     const pair = keyring.createFromUri(mnemonic, { name: state.username });
@@ -170,7 +169,7 @@ export function Main() {
 
     const authorInfo = {
       username: state.username,
-      // email: state.email,
+      email: state.email,
       password: state.password,
       // chain_address: pair.address,
     };
@@ -191,18 +190,28 @@ export function Main() {
       .then((response) => {
         console.log(response)
         // setUsername(username_ref.current);
-        // const access_token = response.data.access_token;
-        // axios.defaults.headers.common['Authorization'] = access_token;
+        const access_token = response.data.access;
+        const refresh_token = response.data.refresh;
 
-        // storage.scifanchain_username = state.username;
-        // storage.scifanchain_access_token = access_token;
+        // 对返回的tokon解码
+        // 将解码后的字符串转为json对象
+        const payload = access_token.split('.')[1]
+        const payloadJson = JSON.parse(window.atob(payload))
 
-        // console.log(response.data.access_token);
-        // console.log(response.data.token_type);
-        // console.log(response.data.exp);
+        // 本地存储
+        storage.scifanchain_username = state.username;
+        storage.scifanchain_access_token = access_token;
+        storage.scifanchain_refresh_token = refresh_token;
+        storage.scifanchain_expired_time = payloadJson.exp;
+
+        setUsername(state.username)
+
+        // 设置axios请求头
+        // 注意Bearer后面需有空格
+        axios.defaults.headers.common['Authorization'] = "Bearer " + access_token;
 
         // history.push('/sign-key');
-        // console.log(response.data.refresh_token)
+
       })
       .catch((err) => {
         console.log(err);

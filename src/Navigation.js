@@ -1,9 +1,9 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import { Container, Menu, Button, Modal, Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
 import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil';
-import { usernameState } from './StateManager'
+import { usernameState } from './StateManager';
 
 function Navigation() {
 
@@ -13,14 +13,18 @@ function Navigation() {
         setActiveItem(name)
     }
 
-    // 同步用户状态
-    const [username, setUsername] = useRecoilState(usernameState)
+    // 本地存储
+    const storage = window.localStorage;
 
+    // 同步用户
+    const [username, setUsername] = useRecoilState(usernameState)
+    
     // 用户注销
     const handleLogout = () => {
         window.localStorage.removeItem('scifanchain_username');
         window.localStorage.removeItem('scifanchain_access_token');
         window.localStorage.removeItem('scifanchain_refresh_token');
+        window.localStorage.removeItem('scifanchain_expired_time');
         setUsername('')
     }
 
