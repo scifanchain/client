@@ -1,17 +1,14 @@
-import React, { useState, useEffect, createRef, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Container,
-  Dimmer,
-  Loader,
   Grid,
   Form,
   Button,
   Message,
-  Header,
-  Image,
-  Modal,
 } from 'semantic-ui-react';
 import axios from 'axios';
+
+import config from '../config';
 
 import { useRecoilState } from 'recoil';
 import { usernameState, mnemonicState } from '../StateManager';
@@ -173,9 +170,9 @@ export function Main() {
 
     const authorInfo = {
       username: state.username,
-      email: state.email,
+      // email: state.email,
       password: state.password,
-      chain_address: pair.address,
+      // chain_address: pair.address,
     };
 
     axios({
@@ -187,25 +184,24 @@ export function Main() {
         'Content-Type': 'application/json',
       },
       method: 'POST',
-      url: 'https://api.scifanchain.com/authors/create_author/',
+      url: 'token/',
       // data: qs.stringify(authorInfo)
       data: authorInfo,
     })
       .then((response) => {
-        setUsername(username_ref.current);
+        console.log(response)
+        // setUsername(username_ref.current);
+        // const access_token = response.data.access_token;
+        // axios.defaults.headers.common['Authorization'] = access_token;
 
-        // console.log(response)
-        const access_token = response.data.access_token;
-        axios.defaults.headers.common['Authorization'] = access_token;
+        // storage.scifanchain_username = state.username;
+        // storage.scifanchain_access_token = access_token;
 
-        storage.scifanchain_username = state.username;
-        storage.scifanchain_access_token = access_token;
+        // console.log(response.data.access_token);
+        // console.log(response.data.token_type);
+        // console.log(response.data.exp);
 
-        console.log(response.data.access_token);
-        console.log(response.data.token_type);
-        console.log(response.data.exp);
-
-        history.push('/sign-key');
+        // history.push('/sign-key');
         // console.log(response.data.refresh_token)
       })
       .catch((err) => {
