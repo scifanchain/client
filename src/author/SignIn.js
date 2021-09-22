@@ -47,7 +47,7 @@ function SignIn() {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             method: 'post',
-            url: config.API_URL + '/authors/login/',
+            url: config.API_URL + 'token/',
             data: qs.stringify(loginInfo)
         }).then(response => {
             setUsername(state.username)

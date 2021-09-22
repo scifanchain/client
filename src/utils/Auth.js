@@ -5,6 +5,25 @@ import { usernameState } from '../StateManager';
 import axios from 'axios';
 
 
+function login(props) {
+    return fetch('token/', {
+        method: 'post',
+        headers: {
+            accept: 'application/json',
+        },
+        data: {
+            username: props.username,
+            password: props.password,
+        },
+    }).then(
+        (data) => {
+            console.log(data.access)
+        }
+    )
+};
+
+
+
 // 检查令牌
 export function checkToken() {
     // 本地存储

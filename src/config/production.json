@@ -1,3 +1,4 @@
 {
-  "PROVIDER_SOCKET": "wss://chain.scifanchain.com"
+  "PROVIDER_SOCKET": "wss://chain.scifanchain.com",
+  "API_URL": "https://api.sci.fan/"
 }

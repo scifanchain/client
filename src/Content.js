@@ -9,20 +9,20 @@ import SignKey from './author/SignKey';
 import Wallet from './author/Wallet';
 import Profile from './author/Profile';
 import Stage from './story/Stage';
-import Finance from './chain//Finance';
+import Finance from './chain/Finance';
 import Era from './Era';
 import Space from './Space';
 import Stars from './Stars';
 import Community from './Community';
 import Expedition from './Expedition';
-import Test from './Test';
+// import Test from './Test';
 
 // import 404 from './404'
 
 
 export default function Content() {
     return (
-      <Switch>
+      <Switch>1
         <Route path='/sign-in' component={SignIn} />
         <Route path='/sign-up' component={SignUp} />
         <Route path='/sign-key' component={SignKey} />
@@ -37,7 +37,7 @@ export default function Content() {
         <Route path='/expedition' component={Expedition} />
         <Route path='/stage/:stage_id' component={Stage} />
         <Route path='/' exact component={Home} />
-        <Route path='/test' exact component={Test} />
+        {/* <Route path='/test' exact component={Test} /> */}
       </Switch>
     )
 }

@@ -20,14 +20,13 @@ import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import keyring from '@polkadot/ui-keyring';
 
+import { register } from '../utils/Api'
+
 export function Main() {
   // 用户登录相关组件
   const [username, setUsername] = useRecoilState(usernameState);
   // 助记词
   const [mnemonic, setMnemonic] = useRecoilState(mnemonicState);
-
-  // 本地存储
-  const storage = window.localStorage;
 
   // 页面跳转
   const history = useHistory();
@@ -80,7 +79,7 @@ export function Main() {
         break;
       default:
     }
-  }
+  };
 
   // 验证用户名
   function validUsername() {
@@ -94,7 +93,7 @@ export function Main() {
       allow_username.current = true;
     }
     submitCheck();
-  }
+  };
 
   // 验证邮箱
   function validEmail() {
@@ -110,7 +109,7 @@ export function Main() {
       allow_email.current = true;
     }
     submitCheck();
-  }
+  };
 
   // 验证密码
   function validPassword() {
@@ -158,64 +157,18 @@ export function Main() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // 创建pair
-    const mnemonic = mnemonicGenerate();
-    const pair = keyring.createFromUri(mnemonic, { name: state.username });
-    const chain_account = keyring.saveAccount(pair, state.password);
-
+    // const mnemonic = mnemonicGenerate();
+    // const pair = keyring.createFromUri(mnemonic, { name: state.username });
+    // const chain_account = keyring.saveAccount(pair, state.password);
     // console.log(chain_account)
-
     // 与其它组件共享
-    setMnemonic(mnemonic);
+    // setMnemonic(mnemonic);
 
-    const authorInfo = {
-      username: state.username,
-      email: state.email,
-      password: state.password,
-      // chain_address: pair.address,
-    };
+    // 注册
+    register(state.username, state.password, state.email);
 
-    axios({
-      // Oauth2要求必须以表单形式提交
-      // headers: {
-      //     'Content-Type': 'application/x-www-form-urlencoded'
-      // },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      url: 'token/',
-      // data: qs.stringify(authorInfo)
-      data: authorInfo,
-    })
-      .then((response) => {
-        console.log(response)
-        // setUsername(username_ref.current);
-        const access_token = response.data.access;
-        const refresh_token = response.data.refresh;
+    setUsername(state.username);
 
-        // 对返回的tokon解码
-        // 将解码后的字符串转为json对象
-        const payload = access_token.split('.')[1]
-        const payloadJson = JSON.parse(window.atob(payload))
-
-        // 本地存储
-        storage.scifanchain_username = state.username;
-        storage.scifanchain_access_token = access_token;
-        storage.scifanchain_refresh_token = refresh_token;
-        storage.scifanchain_expired_time = payloadJson.exp;
-
-        setUsername(state.username)
-
-        // 设置axios请求头
-        // 注意Bearer后面需有空格
-        axios.defaults.headers.common['Authorization'] = "Bearer " + access_token;
-
-        // history.push('/sign-key');
-
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   return (
@@ -288,7 +241,7 @@ export function Main() {
       </Container>
     </SubstrateContextProvider>
   );
-}
+};
 
 export default function SignUp() {
   return (
