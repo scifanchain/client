@@ -2,10 +2,10 @@ import { get, post } from './Request';
 
 
 export function register(username, password, email) {
-    post('http://127.0.0.1:8000/register/', {
+    post('register/', {
         username: username,
         password: password,
-        eamil: email
+        email: email
     }).then((res) => {
         console.log(res)
 
