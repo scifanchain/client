@@ -6,7 +6,7 @@ import { mnemonicGenerate, cryptoWaitReady } from '@polkadot/util-crypto';
 import { Keyring } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 
-import { post } from '../utils/Request';
+import { get, post } from '../utils/Request';
 
 // 本地存诸
 const storage = window.localStorage;
@@ -87,7 +87,7 @@ export default function Wallet() {
             <Message size='massive' color='green'>
                 {publicKey}
             </Message>
-            <Button onClick={save_wallet}>完成</Button>
+            <Button onClick={Stages}>完成</Button>
         </div>
     )
 
@@ -98,7 +98,6 @@ export default function Wallet() {
         const access_token = storage.getItem('scifanchain_access_token');
         if (access_token) {
             const payload = storage.getItem('scifanchain_access_token').split('.')[1]
-            console.log(payload)
             const payloadJson = JSON.parse(window.atob(payload))
             const user_id = payloadJson.user_id
 
@@ -145,6 +144,12 @@ export default function Wallet() {
                 </Modal.Actions>
             </Modal>
         )
+    }
+
+    const Stages = () => {
+        get('api/stages/', {}, true).then((res) => {
+            console.log(res)
+        })
     }
 
     return (

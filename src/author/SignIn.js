@@ -1,26 +1,20 @@
 import { useHistory } from 'react-router-dom'
-import React, { Component, useState } from 'react'
-import { Container, Grid, Form, Header, Message, Icon } from 'semantic-ui-react'
-import axios from 'axios'
-import qs from 'qs'
+import React, { useState } from 'react'
+import { Container, Grid, Form, Message, Icon } from 'semantic-ui-react'
+
 import { useRecoilState } from 'recoil'
 import { usernameState } from '../StateManager'
-import config from '../config'
+
 import { post } from '../utils/Request'
+import { useEffect } from 'react/cjs/react.development'
 
 const storage = window.localStorage;
 
+
 function SignIn() {
+    const history = useHistory();
     // 用户登录相关组件
     const [username, setUsername] = useRecoilState(usernameState)
-
-    // 清空用户本地缓存
-    storage.removeItem('scifanchain_username');
-    storage.removeItem('scifanchain_access_token');
-    storage.removeItem('scifanchain_refresh_token');
-    setUsername('')
-
-    const history = useHistory();
 
     const [state, setState] = useState({
         username: '',
@@ -28,10 +22,20 @@ function SignIn() {
         dissplay_hidden: true
     })
 
-    function handleChange(evt) {
+    useEffect(() => {
+        // 清空用户本地缓存
+        storage.removeItem('scifanchain_username');
+        storage.removeItem('scifanchain_access_token');
+        storage.removeItem('scifanchain_refresh_token');
+        storage.removeItem('scifanchain_expired_time');
+        setUsername('')
+
+    })
+
+    function handleChange(e) {
         setState({
             ...state,
-            [evt.target.name]: evt.target.value,
+            [e.target.name]: e.target.value,
         });
     }
 
@@ -62,7 +66,6 @@ function SignIn() {
     };
 
     return (
-
         <Container>
             <Grid>
                 <Grid.Row>

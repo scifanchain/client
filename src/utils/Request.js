@@ -18,29 +18,6 @@ const instance = axios.create({
 
 instance.defaults.baseURL = config.API_URL;
 
-// 调用本地的refresh_token，刷新 access_token
-const refreshToken = () => {
-    instance({
-        url: 'api/token/refresh/',
-        method: 'post',
-        headers: {
-            'Authorization': 'Bearer ' + storage.getItem('scifanchain_refresh_token')
-        },
-    }).then((res) => {
-        // 对返回的tokon解码
-        // 将解码后的字符串转为json对象
-        const payload = access_token.split('.')[1]
-        const payloadJson = JSON.parse(window.atob(payload))
-
-        // 删除旧令牌
-        storage.removeItem('scifanchain_access_token');
-
-        // 存储新令牌
-        storage.scifanchain_access_token = res.data.access_token;
-        storage.scifanchain_refresh_token = res.data.refresh_token;
-        storage.scifanchain_expired_time = payloadJson.exp;
-    })
-}
 
 let isRefreshing = false // 标记是否正在刷新 token
 let requests = [] // 存储待重发请求的数组
@@ -59,9 +36,7 @@ instance.interceptors.response.use(response => {
             instance({
                 url: 'api/token/refresh/',
                 method: 'post',
-                headers: {
-                    'Authorization': 'Bearer ' + storage.getItem('scifanchain_refresh_token')
-                },
+                data: { 'refresh': storage.getItem('scifanchain_refresh_token')}
             }).then((res) => {
                 // 对返回的tokon解码
                 // 将解码后的字符串转为json对象
@@ -73,7 +48,7 @@ instance.interceptors.response.use(response => {
 
                 // 存储新令牌
                 storage.scifanchain_access_token = res.data.access;
-                storage.scifanchain_refresh_token = res.data.refresh;
+                // storage.scifanchain_refresh_token = res.data.refresh;
                 storage.scifanchain_expired_time = payloadJson.exp;
 
                 config.headers.Authorization = `Bearer ${res.data.access}`
@@ -84,7 +59,8 @@ instance.interceptors.response.use(response => {
                 // window.location.reload()
                 return instance(config)
             }).catch(err => {
-                window.location.href = "/sign-in/"
+                console.log(err)
+                // window.location.href = "/sign-in/"
             }).finally(() => {
                 isRefreshing = false
             })
