@@ -155,7 +155,7 @@ export function Main() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    post('register/', {
+    post('api/register/', {
       username: state.username,
       password: state.password,
       email: state.email

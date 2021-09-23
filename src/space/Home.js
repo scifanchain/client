@@ -2,8 +2,6 @@ import React, { useEffect, useState, createRef, createContext } from 'react';
 import { Switch, Route,  Link } from 'react-router-dom';
 import { Grid, List, Header, Menu } from 'semantic-ui-react';
 
-
-
 import StageEditor from '../widget/StageEditor';
 
 import { useRecoilState } from 'recoil';

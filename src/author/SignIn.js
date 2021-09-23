@@ -5,7 +5,8 @@ import axios from 'axios'
 import qs from 'qs'
 import { useRecoilState } from 'recoil'
 import { usernameState } from '../StateManager'
-import config from "../config"
+import config from '../config'
+import { post } from '../utils/Request'
 
 const storage = window.localStorage;
 
@@ -36,28 +37,24 @@ function SignIn() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const loginInfo = {
+
+        post('api/token/', {
             username: state.username,
             password: state.password
-        };
-
-        axios({
-            // Oauth2要求必须以表单形式提交
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'post',
-            url: config.API_URL + 'token/',
-            data: qs.stringify(loginInfo)
-        }).then(response => {
+        }).then(res => {
             setUsername(state.username)
-            const access_token = response.data.access_token;
-            const refresh_token = response.data.refresh_token;
-            axios.defaults.headers.common["Authorization"] = 'Bearer' + access_token;
+
+            // 对返回的tokon解码
+            // 将解码后的字符串转为json对象
+            const payload = res.data.access.split('.')[1]
+            const payloadJson = JSON.parse(window.atob(payload))
+
+            // axios.defaults.headers.common["Authorization"] = 'Bearer' + access_token;
             storage.scifanchain_username = state.username;
-            storage.scifanchain_access_token = access_token;
-            storage.scifanchain_refresh_token = refresh_token;
-            history.push('/space');
+            storage.scifanchain_access_token = res.data.access;
+            storage.scifanchain_refresh_token = res.data.refresh;
+            storage.scifanchain_expired_time = payloadJson.exp;
+            history.push('/space/home/');
         }).catch(err => {
             setState({ ...state, dissplay_hidden: false });
             console.log(err);

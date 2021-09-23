@@ -4,30 +4,24 @@ import config from '../config';
 
 // 本地存诸
 const storage = window.localStorage;
+// 从本地获取 Token
+const getToken = () => 'Bearer ' + storage.getItem('scifanchain_access_token');
 
 // 创建自定义 axios 实例
 const instance = axios.create({
     timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
+        'Authorization': getToken()
     }
 })
 
 instance.defaults.baseURL = config.API_URL;
 
-// 从本地获取 Token
-const getToken = () => 'Bearer ' + storage.getItem('scifanchain_access_token');
-
-// 设置 Token
-const setToken = (token) => {
-    storage.removeItem('scifanchain_access_token');
-    storage.scifanchain_access_token = token;
-}
-
 // 调用本地的refresh_token，刷新 access_token
 const refreshToken = () => {
     instance({
-        url: '/token/refresh/',
+        url: 'api/token/refresh/',
         method: 'post',
         headers: {
             'Authorization': 'Bearer ' + storage.getItem('scifanchain_refresh_token')
@@ -37,6 +31,9 @@ const refreshToken = () => {
         // 将解码后的字符串转为json对象
         const payload = access_token.split('.')[1]
         const payloadJson = JSON.parse(window.atob(payload))
+
+        // 删除旧令牌
+        storage.removeItem('scifanchain_access_token');
 
         // 存储新令牌
         storage.scifanchain_access_token = res.data.access_token;
@@ -59,14 +56,30 @@ instance.interceptors.response.use(response => {
         const { config } = error
         if (!isRefreshing) {
             isRefreshing = true
-            return refreshToken().then(res => {
-                const { access_token } = res.data
-                console.log(access_token)
-                setToken(access_token)
-                config.headers.Authorization = `Bearer ${access_token}`
+            instance({
+                url: 'api/token/refresh/',
+                method: 'post',
+                headers: {
+                    'Authorization': 'Bearer ' + storage.getItem('scifanchain_refresh_token')
+                },
+            }).then((res) => {
+                // 对返回的tokon解码
+                // 将解码后的字符串转为json对象
+                const payload = res.data.access.split('.')[1]
+                const payloadJson = JSON.parse(window.atob(payload))
+
+                // 删除旧令牌
+                storage.removeItem('scifanchain_access_token');
+
+                // 存储新令牌
+                storage.scifanchain_access_token = res.data.access;
+                storage.scifanchain_refresh_token = res.data.refresh;
+                storage.scifanchain_expired_time = payloadJson.exp;
+
+                config.headers.Authorization = `Bearer ${res.data.access}`
                 // token 刷新后将数组中的方法重新执行
                 console.log(requests)
-                requests.forEach((cb) => cb(access_token))
+                requests.forEach((cb) => cb(res.data.access))
                 requests = [] // 重新请求完清空
                 // window.location.reload()
                 return instance(config)
