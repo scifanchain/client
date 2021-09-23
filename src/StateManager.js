@@ -10,11 +10,6 @@ export const navState = atom({
 });
 
 export const usernameState = atom({
-    key: 'username', 
+    key: 'username',
     default: username,
-});
-
-export const mnemonicState = atom({
-    key: 'mnemonic',
-    default: '',
 });

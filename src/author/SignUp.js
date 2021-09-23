@@ -17,16 +17,14 @@ import { useHistory } from 'react-router-dom';
 
 import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 
-import { mnemonicGenerate } from '@polkadot/util-crypto';
-import keyring from '@polkadot/ui-keyring';
-
-import { register } from '../utils/Api'
+import { get, post } from '../utils/Request';
 
 export function Main() {
+  // 本地存储
+  const storage = window.localStorage;
+
   // 用户登录相关组件
-  const [username, setUsername] = useRecoilState(usernameState);
-  // 助记词
-  const [mnemonic, setMnemonic] = useRecoilState(mnemonicState);
+  const [usernameGlobal, setUsernameGlobal] = useRecoilState(usernameState);
 
   // 页面跳转
   const history = useHistory();
@@ -156,18 +154,44 @@ export function Main() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // 创建pair
-    // const mnemonic = mnemonicGenerate();
-    // const pair = keyring.createFromUri(mnemonic, { name: state.username });
-    // const chain_account = keyring.saveAccount(pair, state.password);
-    // console.log(chain_account)
-    // 与其它组件共享
-    // setMnemonic(mnemonic);
 
-    // 注册
-    register(state.username, state.password, state.email);
+    post('register/', {
+      username: state.username,
+      password: state.password,
+      email: state.email
+    }).then((res) => {
+      console.log(res)
+      if (!res.data.error) {
+        // 对返回的tokon解码
+        // 将解码后的字符串转为json对象
+        const payload = res.data.tokens.access.split('.')[1]
+        const payloadJson = JSON.parse(window.atob(payload))
 
-    setUsername(state.username);
+        // 本地存储
+        storage.scifanchain_username = res.data.username;
+        storage.scifanchain_access_token = res.data.tokens.access;
+        storage.scifanchain_refresh_token = res.data.tokens.refresh;
+        storage.scifanchain_expired_time = payloadJson.exp;
+
+        // 设置axios请求头
+        // 注意Bearer后面需有空格
+        axios.defaults.headers.common.Authorization = "Bearer " + res.data.tokens.access;
+
+        // 同步用户全局状态
+        setUsernameGlobal(res.data.username);
+
+        history.push('/space/home');
+      }
+      else {
+        console.log(res.data.error)
+      }
+      
+
+    }).catch((err) => {
+      console.log(err);
+    });
+
+   
 
   };
 

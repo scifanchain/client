@@ -53,21 +53,6 @@ function Navigation() {
                 active={activeItem === '时空桥'}
                 onClick={handleItemClick}>
             </Menu.Item>
-            <Menu.Item as={Link} to='/expedition'
-                name='基地'
-                active={activeItem === '基地'}
-                onClick={handleItemClick}>
-            </Menu.Item>
-            <Menu.Item as={Link} to='/test'
-                name='测试'
-                active={activeItem === '测试'}
-                onClick={handleItemClick}>
-            </Menu.Item>
-            {/* <Menu.Item as={Link} to='/community'
-        name='星光社区'
-        active={activeItem === '星光社区'}
-        onClick={handleItemClick}>
-      </Menu.Item> */}
             <Menu.Item as={Link} to='/finance'
                 name='社区'
                 active={activeItem === '社区'}
@@ -77,9 +62,10 @@ function Navigation() {
                 {username &&
                     <Dropdown text={username} pointing className='link item'>
                         <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to='/space'>我的空间</Dropdown.Item>
-                            <Dropdown.Item as={Link} to='/wallet'>我的钱包</Dropdown.Item>
-                            <Dropdown.Item as={Link} to='/profile'>账号设置</Dropdown.Item>
+                            <Dropdown.Item as={Link} to='/space/home'>我的空间</Dropdown.Item>
+                            <Dropdown.Item as={Link} to='/space/works'>我的作品</Dropdown.Item>
+                            <Dropdown.Item as={Link} to='/space/wallet'>我的钱包</Dropdown.Item>
+                            <Dropdown.Item as={Link} to='/space/profile'>账号设置</Dropdown.Item>
                             <Dropdown.Divider />
                             <Dropdown.Item onClick={handleLogout}>
                                 退出

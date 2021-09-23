@@ -3,7 +3,7 @@ import { BrowserRouter as Router, } from 'react-router-dom'
 import { RecoilRoot } from 'recoil';
 
 import Navigation from './Navigation';
-import Content from './Content';
+import Container from './Container';
 import Footer from './Footer'
 
 export default function App() {
@@ -11,7 +11,7 @@ export default function App() {
         <RecoilRoot>
             <Router>
                 {<Navigation />}
-                {<Content />}
+                {<Container />}
                 {<Footer />}
             </Router>
         </RecoilRoot>

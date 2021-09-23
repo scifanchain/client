@@ -11,7 +11,7 @@ import Profile from './author/Profile';
 import Stage from './story/Stage';
 import Finance from './chain/Finance';
 import Era from './Era';
-import Space from './Space';
+import SpaceHome from './space/Home';
 import Stars from './Stars';
 import Community from './Community';
 import Expedition from './Expedition';
@@ -22,7 +22,7 @@ import Expedition from './Expedition';
 
 export default function Content() {
     return (
-      <Switch>1
+      <Switch>
         <Route path='/sign-in' component={SignIn} />
         <Route path='/sign-up' component={SignUp} />
         <Route path='/sign-key' component={SignKey} />
@@ -30,7 +30,7 @@ export default function Content() {
         <Route path='/profile' component={Profile} />
         <Route path='/finance' component={Finance} />
         <Route path='/galaxy' component={Galaxy} />
-        <Route path='/space' component={Space} />
+        <Route path='/space' component={SpaceHome} />
         <Route path='/era' component={Era} />
         <Route path='/stars' component={Stars} />
         <Route path='/community' component={Community} />

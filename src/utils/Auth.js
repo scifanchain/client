@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react'
 import { useRecoilState } from 'recoil';
 import { usernameState } from '../StateManager';
 
-import axios from 'axios';
+import {get, post} from '../utils/Request';
 
 
 function login(props) {
