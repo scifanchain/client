@@ -37,7 +37,7 @@ instance.interceptors.response.use(response => {
                 url: 'api/token/refresh/',
                 method: 'post',
                 data: { 'refresh': storage.getItem('scifanchain_refresh_token')}
-            }).then((res) => {
+            }).then((res) => {       
                 // 对返回的tokon解码
                 // 将解码后的字符串转为json对象
                 const payload = res.data.access.split('.')[1]
@@ -50,6 +50,7 @@ instance.interceptors.response.use(response => {
                 storage.scifanchain_access_token = res.data.access;
                 // storage.scifanchain_refresh_token = res.data.refresh;
                 storage.scifanchain_expired_time = payloadJson.exp;
+                storage.scifanchain_user_id = payloadJson.user_id;
 
                 config.headers.Authorization = `Bearer ${res.data.access}`
                 // token 刷新后将数组中的方法重新执行

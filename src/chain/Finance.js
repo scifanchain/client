@@ -27,7 +27,7 @@ function Main () {
     keyring.getPair(accountAddress);
 
   const loader = text =>
-    <Dimmer active>
+    <Dimmer active inverted>
       <Loader size='small'>{text}</Loader>
     </Dimmer>;
 

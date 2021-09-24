@@ -88,7 +88,7 @@ export default function SpaceHome() {
                     <Grid.Column width={12}>
                         <Switch>
                             <Route path='/space/profile' component={Profile} />
-                            {/* <Route path='/space/works' component={SpaceHome} /> */}
+                            <Route path='/space/works' component={Works} />
                             <Route path='/space/wallet' component={Wallet} />
                         </Switch>
                         {/* <StageEditor stage={{}} /> */}
