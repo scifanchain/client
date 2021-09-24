@@ -1,7 +1,6 @@
 import React, { useState, createRef, useEffect } from 'react';
 import { Container, Dimmer, Loader, Grid, Header, Button, Message, Divider, Icon, Segment } from 'semantic-ui-react';
 import { useLocation, useParams} from 'react-router-dom'
-import 'semantic-ui-css/semantic.min.css';
 
 import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 import { DeveloperConsole } from '../substrate-lib/components';
@@ -21,7 +20,7 @@ function Main() {
 
   // React hooks for all the state variables we track.
   // Learn more at: https://reactjs.org/docs/hooks-intro.html
-  const [accountAddress, setAccountAddress] = useState(null);
+  const [accountAddress, setAccountAddress] = useState('5ChvuLTeQBMuY2hpjK6QoK6Ff4oPfoNTihCVgnURbtk4v63a');
   const {apiState, keyring, keyringState, apiError } = useSubstrate();
 
   const [loading, setLoading] = useState(true);
@@ -32,6 +31,7 @@ function Main() {
   // 接收跳转参数
   const params = useParams();
 
+ 
   // 加载数据
   useEffect(() => {
     let token = window.localStorage.getItem("scifanchain_access_token")
@@ -53,23 +53,23 @@ function Main() {
       });
   }, [])
 
-  useEffect(() => {
-    axios({
-      method: 'get',
-      url: 'https://api.scifanchain.com/authors/me/',
-    }).then(response => {
-      setLoading(false)
-      console.log(accountAddress)
-      // setAccountAddress(response.data.chain_address)
-      // 开发环境下Alice权限
-      console.log("chain_address:" + response.data.chain_address)
-      setAccountAddress('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
-    }).catch(err => {
-      setLoading(false)
-      setError('很抱歉，没有获取到数据！')
-      console.log(err)
-    });
-  }, [])
+  // useEffect(() => {
+  //   axios({
+  //     method: 'get',
+  //     url: 'https://api.scifanchain.com/authors/me/',
+  //   }).then(response => {
+  //     setLoading(false)
+  //     console.log(accountAddress)
+  //     // setAccountAddress(response.data.chain_address)
+  //     // 开发环境下Alice权限
+  //     console.log("chain_address:" + response.data.chain_address)
+  //     setAccountAddress('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
+  //   }).catch(err => {
+  //     setLoading(false)
+  //     setError('很抱歉，没有获取到数据！')
+  //     console.log(err)
+  //   });
+  // }, [])
 
   // 获取当前账户
   const accountPair =
@@ -78,7 +78,7 @@ function Main() {
     keyring.getPair(accountAddress);
   
   const loader = text =>
-    <Dimmer active>
+    <Dimmer active inverted>
       <Loader size='small'>{text}</Loader>
     </Dimmer>;
 
@@ -107,16 +107,13 @@ function Main() {
     setShowEditor(false)
   }
 
-  const contextRef = createRef();
-
   return (
-    <div ref={contextRef}>
+    <div>
       {!loading && !error &&
-      <Container ref={contextRef}>
+      <Container>
         <Grid columns={2}>
           <Grid.Column width={4}>
-            <div style={{marginBottom: '9rem'}}></div>
-            <MenuLeft />
+
           </Grid.Column>
           <Grid.Column width={12}>
             {showEditor &&
