@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Icon, Step, Divider, Message, Modal, Header } from 'semantic-ui-react'
 import { useHistory } from 'react-router-dom';
 
-import { mnemonicGenerate, cryptoWaitReady } from '@polkadot/util-crypto';
+import { mnemonicGenerate } from '@polkadot/util-crypto';
 import { Keyring } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 
@@ -44,9 +44,15 @@ export default function Wallet() {
     const [mnemonic, setMnemonic] = useState('')
     const [publicKey, setPublicKey] = useState('')
     const [address, setAddress] = useState('')
-    
     const [openLoginModal, setOpenLoginModal] = useState(false)
-    console.log(openLoginModal)
+
+    useEffect(() => {
+        get('api/wallets/14/', {}, true).then((res) => {
+            console.log(res)
+            setAddress(res.data.address)
+            setPublicKey(res.data.publickey)
+        }, [])
+    })
 
     const generate_mnemonic = () => {
         // 生成助记词
@@ -87,7 +93,7 @@ export default function Wallet() {
             <Message size='massive' color='green'>
                 {publicKey}
             </Message>
-            <Button onClick={Stages}>完成</Button>
+            <Button onClick={save_wallet}>完成</Button>
         </div>
     )
 
@@ -101,7 +107,7 @@ export default function Wallet() {
             const payloadJson = JSON.parse(window.atob(payload))
             const user_id = payloadJson.user_id
 
-            post('space/save_wallet/', {
+            post('api/wallets/', {
                 'username': storage.getItem('scifanchain_username'),
                 'user_id': user_id,
                 'publickey': publicKey,
