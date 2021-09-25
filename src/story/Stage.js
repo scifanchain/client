@@ -1,6 +1,6 @@
 import React, { useState, createRef, useEffect } from 'react';
 import { Container, Dimmer, Loader, Grid, Header, Button, Message, Divider, Icon, Segment } from 'semantic-ui-react';
-import { useLocation, useParams} from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 import { DeveloperConsole } from '../substrate-lib/components';
@@ -14,14 +14,15 @@ import Poe from '../chain/Poe'
 import StageEditor from '../widget/StageEditor';
 
 import MenuLeft from '../widget/Menus';
+import { get } from '../utils/Request';
 
 
 function Main() {
 
   // React hooks for all the state variables we track.
   // Learn more at: https://reactjs.org/docs/hooks-intro.html
-  const [accountAddress, setAccountAddress] = useState('5ChvuLTeQBMuY2hpjK6QoK6Ff4oPfoNTihCVgnURbtk4v63a');
-  const {apiState, keyring, keyringState, apiError } = useSubstrate();
+  const [accountAddress, setAccountAddress] = useState('');
+  const { apiState, keyring, keyringState, apiError } = useSubstrate();
 
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState([])
@@ -31,7 +32,7 @@ function Main() {
   // 接收跳转参数
   const params = useParams();
 
- 
+
   // 加载数据
   useEffect(() => {
     let token = window.localStorage.getItem("scifanchain_access_token")
@@ -71,12 +72,18 @@ function Main() {
   //   });
   // }, [])
 
+  useEffect(() => {
+    get('authors/my_wallets/14/', {}, true).then((res) => {
+      setAccountAddress(res.data.address)
+    }, [])
+  })
+
   // 获取当前账户
   const accountPair =
     accountAddress &&
     keyringState === 'READY' &&
     keyring.getPair(accountAddress);
-  
+
   const loader = text =>
     <Dimmer active inverted>
       <Loader size='small'>{text}</Loader>
@@ -110,51 +117,51 @@ function Main() {
   return (
     <div>
       {!loading && !error &&
-      <Container>
-        <Grid columns={2}>
-          <Grid.Column width={4}>
+        <Container>
+          <Grid columns={2}>
+            <Grid.Column width={4}>
 
-          </Grid.Column>
-          <Grid.Column width={12}>
-            {showEditor &&
-            <div>
-              <Container textAlign='right' style={{marginBottom: '1rem'}}>
-                <Button.Group basic size='small'>
-                  <Button icon='reply' onClick={onCancel}/>
-                  <Button icon='save' />
-                </Button.Group>
-              </Container>
-              <StageEditor stage={stage} style={{ clear: 'both' }}/>
-            </div>
-            }
-            {!showEditor &&
-              <div>
-                <Poe accountPair={accountPair}/>
-                <Grid.Row>
-                  <Button.Group basic size='small' floated='right'>
-                    <Button icon='edit' onClick={onEdit}/>
-                    <Button icon='share alternate' />
-                    <Button icon='download' />
-                  </Button.Group>
-                  <Header as="h1" id='stageTitle'>{stage.title}</Header>
-                </Grid.Row>
+            </Grid.Column>
+            <Grid.Column width={12}>
+              {showEditor &&
+                <div>
+                  <Container textAlign='right' style={{ marginBottom: '1rem' }}>
+                    <Button.Group basic size='small'>
+                      <Button icon='reply' onClick={onCancel} />
+                      <Button icon='save' />
+                    </Button.Group>
+                  </Container>
+                  <StageEditor stage={stage} style={{ clear: 'both' }} />
+                </div>
+              }
+              {!showEditor &&
+                <div>
+                  <Poe accountPair={accountPair} />
+                  <Grid.Row>
+                    <Button.Group basic size='small' floated='right'>
+                      <Button icon='edit' onClick={onEdit} />
+                      <Button icon='share alternate' />
+                      <Button icon='download' />
+                    </Button.Group>
+                    <Header as="h1" id='stageTitle'>{stage.title}</Header>
+                  </Grid.Row>
 
-                <Divider horizontal>
-                  <Header as='h4'>
-                    <Icon name='recycle' />
-                    开放创作
-                  </Header>
-                </Divider>
-                <Grid.Row>
-                  <div id='stageContent' style={{ marginBottom: '2rem', textAlign: 'justify' }}>
-                    <ReactMarkdown children={stage.content} />
-                  </div>
-                </Grid.Row>
-              </div>
-            }
-          </Grid.Column>
-        </Grid>
-      </Container>
+                  <Divider horizontal>
+                    <Header as='h4'>
+                      <Icon name='recycle' />
+                      开放创作
+                    </Header>
+                  </Divider>
+                  <Grid.Row>
+                    <div id='stageContent' style={{ marginBottom: '2rem', textAlign: 'justify' }}>
+                      <ReactMarkdown children={stage.content} />
+                    </div>
+                  </Grid.Row>
+                </div>
+              }
+            </Grid.Column>
+          </Grid>
+        </Container>
       }
       <DeveloperConsole />
     </div>
@@ -164,7 +171,7 @@ function Main() {
 export default function Stage() {
   return (
     <SubstrateContextProvider>
-        <Main />
+      <Main />
     </SubstrateContextProvider>
   );
 }

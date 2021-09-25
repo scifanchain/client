@@ -4,8 +4,7 @@ import { Container, Dimmer, Loader, Grid, Sticky, Message } from 'semantic-ui-re
 import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 import { DeveloperConsole } from '../substrate-lib/components';
 
-import Address from './Address';
-import Balance from './Balance';
+import Account from './Account';
 
 function Main() {
     const [accountAddress, setAccountAddress] = useState(null);
@@ -42,8 +41,7 @@ function Main() {
 
     return (
         <div ref={contextRef}>
-            <Address/>
-            {/* <Balance/> */}
+            <Account/>
             <DeveloperConsole />
         </div>
     );

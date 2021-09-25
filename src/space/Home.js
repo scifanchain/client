@@ -46,7 +46,6 @@ export function SpaceMenu() {
     )
 }
 
-
 export default function SpaceHome() {
 
     const [loading, setLoading] = useState(true);

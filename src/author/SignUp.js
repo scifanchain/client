@@ -8,8 +8,6 @@ import {
 } from 'semantic-ui-react';
 import axios from 'axios';
 
-import config from '../config';
-
 import { useRecoilState } from 'recoil';
 import { usernameState, mnemonicState } from '../StateManager';
 
