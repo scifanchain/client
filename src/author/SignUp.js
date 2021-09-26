@@ -6,6 +6,7 @@ import {
   Button,
   Message,
 } from 'semantic-ui-react';
+
 import axios from 'axios';
 
 import { useRecoilState } from 'recoil';
@@ -16,6 +17,8 @@ import { useHistory } from 'react-router-dom';
 import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 
 import { get, post } from '../utils/Request';
+
+import { SaveAuthorToken } from '../utils/Storage';
 
 export function Main() {
   // 本地存储
@@ -160,16 +163,8 @@ export function Main() {
     }).then((res) => {
       console.log(res)
       if (!res.data.error) {
-        // 对返回的tokon解码
-        // 将解码后的字符串转为json对象
-        const payload = res.data.tokens.access.split('.')[1]
-        const payloadJson = JSON.parse(window.atob(payload))
-
-        // 本地存储
-        storage.scifanchain_username = res.data.username;
-        storage.scifanchain_access_token = res.data.tokens.access;
-        storage.scifanchain_refresh_token = res.data.tokens.refresh;
-        storage.scifanchain_expired_time = payloadJson.exp;
+        // 存储用户令牌
+        SaveAuthorToken(res)
 
         // 设置axios请求头
         // 注意Bearer后面需有空格

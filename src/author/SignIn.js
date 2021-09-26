@@ -1,14 +1,13 @@
-import { useHistory } from 'react-router-dom'
-import React, { useState } from 'react'
-import { Container, Grid, Form, Message, Icon } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Container, Grid, Form, Message, Icon } from 'semantic-ui-react';
 
-import { useRecoilState } from 'recoil'
-import { usernameState } from '../StateManager'
+import { useRecoilState } from 'recoil';
+import { usernameState } from '../StateManager';
 
-import { post } from '../utils/Request'
-import { useEffect } from 'react/cjs/react.development'
+import { post } from '../utils/Request';
 
-const storage = window.localStorage;
+import { SaveAuthorToken, RemoveAuthorToken } from '../utils/Storage';
 
 
 function SignIn() {
@@ -24,11 +23,8 @@ function SignIn() {
 
     useEffect(() => {
         // 清空用户本地缓存
-        storage.removeItem('scifanchain_username');
-        storage.removeItem('scifanchain_access_token');
-        storage.removeItem('scifanchain_refresh_token');
-        storage.removeItem('scifanchain_expired_time');
-        setUsername('')
+        RemoveAuthorToken();
+        setUsername('');
 
     })
 
@@ -47,17 +43,7 @@ function SignIn() {
             password: state.password
         }).then(res => {
             setUsername(state.username)
-
-            // 对返回的tokon解码
-            // 将解码后的字符串转为json对象
-            const payload = res.data.access.split('.')[1]
-            const payloadJson = JSON.parse(window.atob(payload))
-
-            // axios.defaults.headers.common["Authorization"] = 'Bearer' + access_token;
-            storage.scifanchain_username = state.username;
-            storage.scifanchain_access_token = res.data.access;
-            storage.scifanchain_refresh_token = res.data.refresh;
-            storage.scifanchain_expired_time = payloadJson.exp;
+            SaveAuthorToken();
             history.push('/space/home/');
         }).catch(err => {
             setState({ ...state, dissplay_hidden: false });

@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Container, Menu, Image, Dropdown } from 'semantic-ui-react'
+import { Menu, Image, Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
 import { Link } from 'react-router-dom'
 
 import { useRecoilState } from 'recoil';
 import { usernameState } from './StateManager';
+
+import { RemoveAuthorToken } from './utils/Storage';
 
 function Navigation() {
     // 导航图标激活样式
@@ -18,13 +20,7 @@ function Navigation() {
 
     // 用户注销
     const handleLogout = () => {
-        // 本地存储
-        const storage = window.localStorage;
-
-        storage.removeItem('scifanchain_username');
-        storage.removeItem('scifanchain_access_token');
-        storage.removeItem('scifanchain_refresh_token');
-        storage.removeItem('scifanchain_expired_time');
+        RemoveAuthorToken();
         setUsername('')
     };
 
