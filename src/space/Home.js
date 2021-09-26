@@ -1,6 +1,6 @@
 import React, { useEffect, useState, createRef, createContext } from 'react';
 import { Switch, Route,  Link } from 'react-router-dom';
-import { Grid, List, Header, Menu } from 'semantic-ui-react';
+import { Grid, List, Header, Menu, Container } from 'semantic-ui-react';
 
 import StageEditor from '../widget/StageEditor';
 
@@ -21,7 +21,7 @@ export function SpaceMenu() {
     const handleItemClick = (e, { name }) => setActiveItem(name);
 
     return (
-        <Menu pointing vertical>
+        <Menu text vertical>
             <Menu.Item as={Link} to='/space'
                 name='我的空间'
                 active={activeItem === '我的空间'}
@@ -43,6 +43,7 @@ export function SpaceMenu() {
                 onClick={handleItemClick}
             />
         </Menu>
+        
     )
 }
 
@@ -71,7 +72,7 @@ export default function SpaceHome() {
     const contextRef = createRef();
 
     return (
-        <div ref={contextRef}>
+        <Container fluid ref={contextRef}>
             <Grid>
                 <Grid.Row>
                     <Grid.Column width={3}>
@@ -79,12 +80,8 @@ export default function SpaceHome() {
                             <Info />
                         </AuthorContext.Provider> */}
                         <SpaceMenu />
-                        <Header>我的作品</Header>
-                        {!loading && !error &&
-                            <List>{stageList}</List>
-                        }
                     </Grid.Column>
-                    <Grid.Column width={12}>
+                    <Grid.Column width={10}>
                         <Switch>
                             <Route path='/space/profile' component={Profile} />
                             <Route path='/space/works' component={Works} />
@@ -95,6 +92,6 @@ export default function SpaceHome() {
                 </Grid.Row>
             </Grid>
 
-        </div>
+        </Container>
     )
 }

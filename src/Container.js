@@ -20,7 +20,8 @@ import Expedition from './Expedition';
 
 
 export default function Content() {
-    return (
+  return (
+    <div style={{ padding: 1 + 'rem'}}>
       <Switch>
         <Route path='/sign-in' component={SignIn} />
         <Route path='/sign-up' component={SignUp} />
@@ -36,5 +37,6 @@ export default function Content() {
         <Route path='/' exact component={Home} />
         {/* <Route path='/test' exact component={Test} /> */}
       </Switch>
+    </div>
     )
 }

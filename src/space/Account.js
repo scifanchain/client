@@ -142,7 +142,7 @@ function Main() {
     };
 
     useEffect(() => {
-        get('authors/my_wallets/14/', {}, true).then((res) => {
+        get('authors/my_wallets/' + storage.getItem('scifanchain_user_id'), {}, true).then((res) => {
             console.log(res)
             if (res.data.address) {
                 setAddress(res.data.address)
