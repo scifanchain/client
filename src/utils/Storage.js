@@ -3,7 +3,7 @@ const storage = window.localStorage;
 
 export function SaveAuthorToken(props) {
 
-    const {tokens, username} = props.data
+    const { tokens, username } = props.data
 
     // 对返回的tokon解码
     // 将解码后的字符串转为json对象
@@ -23,4 +23,21 @@ export function RemoveAuthorToken() {
     storage.removeItem('scifanchain_access_token');
     storage.removeItem('scifanchain_refresh_token');
     storage.removeItem('scifanchain_expired_time');
+}
+
+export function GetAuthorToken() {
+    const author_token = {};
+    const author = storage.getItem('.scifanchain_user_id');
+    if (!author) {
+        return false;
+    } else {
+        author_token = {
+            'username': storage.getItem('scifanchain_username'),
+            'user_id': storage.getItem('scifanchain_user_id'),
+            'access': storage.getItem('scifanchain_access_token'),
+            'refresh': storage.getItem('scifanchain_refresh_token'),
+            'exp': storage.getItem('scifanchain_expired_time')
+        }
+    }
+    return author_token;
 }

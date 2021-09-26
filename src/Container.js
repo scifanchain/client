@@ -1,5 +1,6 @@
 import React from 'react';
-import { Switch, Route} from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
+import {PrivateRoute} from './PrivateRoute'
 
 import Home from './Home';
 import Galaxy from './Galaxy';
@@ -26,7 +27,7 @@ export default function Content() {
         <Route path='/profile' component={Profile} />
         <Route path='/finance' component={Finance} />
         <Route path='/galaxy' component={Galaxy} />
-        <Route path='/space' component={SpaceHome} />
+        <PrivateRoute path='/space' component={SpaceHome} />
         <Route path='/era' component={Era} />
         <Route path='/stars' component={Stars} />
         <Route path='/community' component={Community} />
