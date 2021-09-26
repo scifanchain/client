@@ -1,20 +1,19 @@
 // 本地存储
 const storage = window.localStorage;
 
-export function SaveAuthorToken(props) {
-
-    const { tokens, username } = props.data
+export function SaveAuthorToken(username, props) {
+    const { access, refresh } = props
 
     // 对返回的tokon解码
     // 将解码后的字符串转为json对象
-    const payload = tokens.access.split('.')[1]
+    const payload = access.split('.')[1]
     const payloadJson = JSON.parse(window.atob(payload))
 
-    storage.scifanchain_username = username;
-    storage.scifanchain_user_id = payloadJson.user_id;
-    storage.scifanchain_access_token = tokens.access;
-    storage.scifanchain_refresh_token = tokens.refresh;
-    storage.scifanchain_expired_time = payloadJson.exp;
+    storage.setItem('scifanchain_username', username);
+    storage.setItem('scifanchain_user_id', payloadJson.user_id);
+    storage.setItem('scifanchain_access_token', access);
+    storage.setItem('scifanchain_refresh_token', refresh);
+    storage.setItem('scifanchain_expired_time', payloadJson.exp);
 }
 
 export function RemoveAuthorToken() {
@@ -26,8 +25,8 @@ export function RemoveAuthorToken() {
 }
 
 export function GetAuthorToken() {
-    const author_token = {};
-    const author = storage.getItem('.scifanchain_user_id');
+    let author_token = {};
+    const author = storage.getItem('scifanchain_user_id');
     if (!author) {
         return false;
     } else {
@@ -39,5 +38,6 @@ export function GetAuthorToken() {
             'exp': storage.getItem('scifanchain_expired_time')
         }
     }
+    
     return author_token;
 }

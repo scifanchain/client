@@ -7,7 +7,7 @@ export const PrivateRoute = ({ component, ...rest }) => (
         GetAuthorToken() ? (
             React.createElement(component, props)
         ) : (
-            <Redirect to={{ pathname: '/SignIn' }} />
+            <Redirect to={{ pathname: '/sign-in' }} />
         )
     )} />
 )

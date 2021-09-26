@@ -164,7 +164,7 @@ export function Main() {
       console.log(res)
       if (!res.data.error) {
         // 存储用户令牌
-        SaveAuthorToken(res)
+        SaveAuthorToken(res.data.username, res.data.tokens)
 
         // 设置axios请求头
         // 注意Bearer后面需有空格
@@ -173,7 +173,7 @@ export function Main() {
         // 同步用户全局状态
         setUsernameGlobal(res.data.username);
 
-        history.push('/space/home');
+        history.push('/space');
       }
       else {
         console.log(res.data.error)

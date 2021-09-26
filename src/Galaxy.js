@@ -4,11 +4,16 @@ import axios from 'axios'
 import qs from 'qs'
 import TheBook from './story/TheBook';
 
+import { GetAuthorToken } from './utils/Storage';
+
 
 const contextRef = createRef();
 
 function Galaxy() {
 
+    const a = GetAuthorToken();
+
+    console.log(a);
    return (
     <div ref={contextRef} style={{padding: '2rem'}}>
        <Container fluid>

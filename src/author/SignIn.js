@@ -43,8 +43,8 @@ function SignIn() {
             password: state.password
         }).then(res => {
             setUsername(state.username)
-            SaveAuthorToken();
-            history.push('/space/home/');
+            SaveAuthorToken(state.username, res.data);
+            history.push('/space');
         }).catch(err => {
             setState({ ...state, dissplay_hidden: false });
             console.log(err);
