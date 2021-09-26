@@ -16,9 +16,7 @@ import StageEditor from '../widget/StageEditor';
 import MenuLeft from '../widget/Menus';
 import { get } from '../utils/Request';
 
-
 function Main() {
-
   // React hooks for all the state variables we track.
   // Learn more at: https://reactjs.org/docs/hooks-intro.html
   const [accountAddress, setAccountAddress] = useState('5GTUkiFUo2tZNtprDYnn8PvG5tus6AUHTp12YyUo8ZeJEKK8');
@@ -31,7 +29,6 @@ function Main() {
 
   // 接收跳转参数
   const params = useParams();
-
 
   // 加载数据
   useEffect(() => {
@@ -75,8 +72,8 @@ function Main() {
   useEffect(() => {
     get('authors/my_wallets/14/', {}, true).then((res) => {
       setAccountAddress(res.data.address)
-    }, [])
-  })
+    }, []);
+  });
 
   // 获取当前账户
   const accountPair =

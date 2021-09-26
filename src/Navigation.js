@@ -6,9 +6,8 @@ import { useRecoilState } from 'recoil';
 import { usernameState } from './StateManager';
 
 function Navigation() {
-
-    // 导航图标激活样式
-    const [activeItem, setActiveItem] = useState('home')
+	// 导航图标激活样式
+	const [activeItem, setActiveItem] = useState('home')
     const handleItemClick = (e, { name }) => {
         setActiveItem(name)
     }
