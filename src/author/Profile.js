@@ -5,8 +5,6 @@ import 'semantic-ui-css/semantic.min.css';
 import { SubstrateContextProvider, useSubstrate } from '../substrate-lib';
 import { DeveloperConsole } from '../substrate-lib/components';
 
-import Wallet from './Wallet';
-
 
 function Main() {
     const [accountAddress, setAccountAddress] = useState(null);
