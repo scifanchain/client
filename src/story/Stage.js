@@ -21,7 +21,7 @@ function Main() {
 
   // React hooks for all the state variables we track.
   // Learn more at: https://reactjs.org/docs/hooks-intro.html
-  const [accountAddress, setAccountAddress] = useState('');
+  const [accountAddress, setAccountAddress] = useState('5GTUkiFUo2tZNtprDYnn8PvG5tus6AUHTp12YyUo8ZeJEKK8');
   const { apiState, keyring, keyringState, apiError } = useSubstrate();
 
   const [loading, setLoading] = useState(true);
