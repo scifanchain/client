@@ -8,3 +8,8 @@
 ::-webkit-scrollbar {
     display: none;
 }
+
+/* 顶部导航去掉圆角 */
+#TopNav {
+  border-radius: 0;
+}

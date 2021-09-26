@@ -1,12 +1,43 @@
 import React, { useEffect, useState, createRef } from 'react';
-import { Grid, Advertisement, Segment, Button, Label, Header } from 'semantic-ui-react'
+import { Grid, Advertisement, Segment, Button, Label, Header, Image } from 'semantic-ui-react'
 import StageList from './story/StageList';
 import List from './author/List';
 import Step from './author/Step';
 
 const contextRef = createRef();
 
+
+
+
 function Home() {
+  const GridExampleDividedNumber = () => (
+    <Grid columns={3} divided>
+      <Grid.Row>
+        <Grid.Column>
+          <Image src='/images/wireframe/media-paragraph.png' />
+        </Grid.Column>
+        <Grid.Column>
+          <Image src='/images/wireframe/media-paragraph.png' />
+        </Grid.Column>
+        <Grid.Column>
+          <Image src='/images/wireframe/media-paragraph.png' />
+        </Grid.Column>
+      </Grid.Row>
+
+      <Grid.Row>
+        <Grid.Column>
+          <Image src='/images/wireframe/media-paragraph.png' />
+        </Grid.Column>
+        <Grid.Column>
+          <Image src='/images/wireframe/media-paragraph.png' />
+        </Grid.Column>
+        <Grid.Column>
+          <Image src='/images/wireframe/media-paragraph.png' />
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
+  )
+
   return (
     <Grid>
       <Grid.Row>
@@ -67,6 +98,7 @@ function Home() {
             style={{ width: "100%", marginBottom: "1rem" }}
           />
           <Step />
+          <GridExampleDividedNumber/>
           <Header as='h3'>
             最新作品
           </Header>
