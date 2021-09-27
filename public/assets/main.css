@@ -17,3 +17,30 @@
 body {
   font-size: 16px !important;
 }
+
+
+/* 前端创作编辑器
+-------------------------------------------------- */
+.stage-title-input {
+  margin-bottom: 1rem;
+}
+.editor-wrap {
+  background-color: #f5f5f5;
+  padding: 2rem;
+  border-radius: 10px;
+}
+.editor-bg {
+  background-color:white;
+  padding: 2rem 0;
+}
+
+.ce-block__content,
+.ce-toolbar__content {
+     /* max-width: calc(100% - 80px) !important; */
+    max-width: 90%;
+}
+.ce-block__content {
+    position: relative;
+    text-align: justify;
+    text-justify: inter-word;
+}

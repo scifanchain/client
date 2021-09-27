@@ -1680,6 +1680,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@editorjs/editorjs@npm:^2.22.2":
+  version: 2.22.3
+  resolution: "@editorjs/editorjs@npm:2.22.3"
+  dependencies:
+    codex-notifier: ^1.1.2
+    codex-tooltip: ^1.0.2
+    nanoid: ^3.1.22
+  checksum: a4232ea90760f07328414f5825d7ce42e990d7244460306efc4b202b7b89a44dc12af758570618db36852fdd3451f6ef81e7247cacd0846bcd86f7c249696643
+  languageName: node
+  linkType: hard
+
 "@eslint/eslintrc@npm:^0.4.3":
   version: 0.4.3
   resolution: "@eslint/eslintrc@npm:0.4.3"
@@ -5720,6 +5731,20 @@ __metadata:
   version: 5.63.0
   resolution: "codemirror@npm:5.63.0"
   checksum: 63074c9a689022c65116de48f741a10508c9b0f7a2caa117561f520154f7f6d5ff9747db2dec602ce7932591b157c1c58e916521c9d7d568a4de3e22d89471c7
+  languageName: node
+  linkType: hard
+
+"codex-notifier@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "codex-notifier@npm:1.1.2"
+  checksum: 8c75f9d6a02c6895bd7b6fc2c8f694c9c5ab91ce377b7a618b170289cebe237a06b99ee90c3587fef25617deff57723c3068138fc3ba2e796a1b90b1cfa16a46
+  languageName: node
+  linkType: hard
+
+"codex-tooltip@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "codex-tooltip@npm:1.0.2"
+  checksum: 1abe98c11b17b3a69f106692e6ecb3f81ddd10c018aaa36e1f8ce9764528dbf779ee02f40acda6fe7c22e8835ed1d6b7e13fdb984540c7ae1a34b9ccc6300e65
   languageName: node
   linkType: hard
 
@@ -11689,6 +11714,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^3.1.22":
+  version: 3.1.28
+  resolution: "nanoid@npm:3.1.28"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 615abb31f9b23bc80100adcbb6e2b9dfb98c8d75c2a70b1eaf5d903c130f7e40cd82a05d56eb1f796c35cf544fb5e4b3323d54c2fed204a677968af54568252d
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.1.25":
   version: 3.1.25
   resolution: "nanoid@npm:3.1.25"
@@ -15125,6 +15159,7 @@ resolve@^2.0.0-next.3:
   resolution: "scifanchain@workspace:."
   dependencies:
     "@babel/core": ^7.14.3
+    "@editorjs/editorjs": ^2.22.2
     "@polkadot/api": ^4.8.1
     "@polkadot/extension-dapp": ^0.38.1
     "@polkadot/keyring": ^6.3.1

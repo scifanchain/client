@@ -16,6 +16,7 @@
     "deploy": "gh-pages -d build -m '[ci skip] Updates'"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.22.2",
     "@polkadot/api": "^4.8.1",
     "@polkadot/extension-dapp": "^0.38.1",
     "@polkadot/keyring": "^6.3.1",

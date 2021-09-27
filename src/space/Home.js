@@ -8,9 +8,10 @@ import { useRecoilState } from 'recoil';
 import { usernameState } from '../StateManager';
 
 
-import Profile from './Profile'
-import Works from './Works'
-import Wallet from './Wallet'
+import Profile from './Profile';
+import Works from './Works';
+import Wallet from './Wallet';
+import CreateStage from './CreateStage';
 
 // 本地存储
 const storage = window.localStorage;
@@ -86,6 +87,7 @@ export default function SpaceHome() {
                             <Route path='/space/profile' component={Profile} />
                             <Route path='/space/works' component={Works} />
                             <Route path='/space/wallet' component={Wallet} />
+                            <Route path='/space/stage/create' component={CreateStage} />
                         </Switch>
                         {/* <StageEditor stage={{}} /> */}
                     </Grid.Column>

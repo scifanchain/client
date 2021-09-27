@@ -4,6 +4,8 @@ import { mnemonicGenerate, cryptoWaitReady } from '@polkadot/util-crypto';
 import { u8aToHex } from '@polkadot/util';
 import keyring from '@polkadot/ui-keyring';
 
+import { Button, Dimmer, Loader, Grid, Sticky, Message } from 'semantic-ui-react';
+
 
 export default function Works() {
 
@@ -38,7 +40,9 @@ export default function Works() {
     },[])
 
     return (
-        <div>my works.</div>
+        <div>
+            <Button as={Link} to={{ pathname: '/space/stage/create' }}>开始创作</Button>
+        </div>
     )
 }
 
