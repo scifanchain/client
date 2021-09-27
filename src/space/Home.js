@@ -2,16 +2,15 @@ import React, { useEffect, useState, createRef, createContext } from 'react';
 import { Switch, Route,  Link } from 'react-router-dom';
 import { Grid, List, Header, Menu, Container } from 'semantic-ui-react';
 
-import StageEditor from '../widget/StageEditor';
-
 import { useRecoilState } from 'recoil';
 import { usernameState } from '../StateManager';
-
 
 import Profile from './Profile';
 import Works from './Works';
 import Wallet from './Wallet';
 import CreateStage from './CreateStage';
+import StageList from './StageList';
+import StageDetail from './StageDetail';
 
 // 本地存储
 const storage = window.localStorage;
@@ -70,10 +69,8 @@ export default function SpaceHome() {
         </List.Item>
     ));
 
-    const contextRef = createRef();
-
     return (
-        <Container fluid ref={contextRef}>
+        <Container fluid>
             <Grid>
                 <Grid.Row>
                     <Grid.Column width={3}>
@@ -88,6 +85,8 @@ export default function SpaceHome() {
                             <Route path='/space/works' component={Works} />
                             <Route path='/space/wallet' component={Wallet} />
                             <Route path='/space/stage/create' component={CreateStage} />
+                            <Route path='/space/stages' component={StageList} />
+                            <Route path='/space/stage/:stage_id' component={StageDetail} />
                         </Switch>
                         {/* <StageEditor stage={{}} /> */}
                     </Grid.Column>

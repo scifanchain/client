@@ -6,6 +6,8 @@ import keyring from '@polkadot/ui-keyring';
 
 import { Button, Dimmer, Loader, Grid, Sticky, Message } from 'semantic-ui-react';
 
+import StageList from './StageList';
+
 
 export default function Works() {
 
@@ -41,7 +43,8 @@ export default function Works() {
 
     return (
         <div>
-            <Button as={Link} to={{ pathname: '/space/stage/create' }}>开始创作</Button>
+            <Button as={Link} to={{ pathname: '/space/stage/create' }} style={{marginBottom: '2rem'}}>开始创作</Button>
+            <StageList />
         </div>
     )
 }

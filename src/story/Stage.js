@@ -17,9 +17,9 @@ import MenuLeft from '../widget/Menus';
 import { get } from '../utils/Request';
 
 function Main() {
-  // React hooks for all the state variables we track.
-  // Learn more at: https://reactjs.org/docs/hooks-intro.html
-  const [accountAddress, setAccountAddress] = useState('5GTUkiFUo2tZNtprDYnn8PvG5tus6AUHTp12YyUo8ZeJEKK8');
+  const storage = window.localStorage;
+  const token = storage.getItem("scifanchain_access_token")
+  const [accountAddress, setAccountAddress] = useState('');
   const { apiState, keyring, keyringState, apiError } = useSubstrate();
 
   const [loading, setLoading] = useState(true);
@@ -32,16 +32,14 @@ function Main() {
 
   // 加载数据
   useEffect(() => {
-    let token = window.localStorage.getItem("scifanchain_access_token")
-    axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    axios.get('https://api.scifanchain.com/stages/' + params.stage_id)
+    get('api/stages/' + params.stage_id + '/', {}, true)
       .then(function (response) {
-        // 处理成功情况
-        setLoading(false)
-        setStage(response.data)
-        setError('')
-        // console.log(response);
-      })
+      // 处理成功情况
+      setLoading(false)
+      setStage(response.data)
+      setError('')
+      // console.log(response);
+    })
       .catch(function (error) {
         // 处理错误情况
         setLoading(false)
@@ -51,26 +49,8 @@ function Main() {
       });
   }, [])
 
-  // useEffect(() => {
-  //   axios({
-  //     method: 'get',
-  //     url: 'https://api.scifanchain.com/authors/me/',
-  //   }).then(response => {
-  //     setLoading(false)
-  //     console.log(accountAddress)
-  //     // setAccountAddress(response.data.chain_address)
-  //     // 开发环境下Alice权限
-  //     console.log("chain_address:" + response.data.chain_address)
-  //     setAccountAddress('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
-  //   }).catch(err => {
-  //     setLoading(false)
-  //     setError('很抱歉，没有获取到数据！')
-  //     console.log(err)
-  //   });
-  // }, [])
-
   useEffect(() => {
-    get('authors/my_wallets/14/', {}, true).then((res) => {
+    get('authors/my_wallets/'+ storage.getItem('scifanchain_user_id') + '/', {}, true).then((res) => {
       setAccountAddress(res.data.address)
     }, []);
   });
@@ -79,7 +59,7 @@ function Main() {
   const accountPair =
     accountAddress &&
     keyringState === 'READY' &&
-    keyring.getPair(accountAddress);
+    keyring.getPair('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY');
 
   const loader = text =>
     <Dimmer active inverted>
