@@ -23,7 +23,7 @@ body {
 -------------------------------------------------- */
 .stage-title {
   background-color: white;
-  border-bottom: #f8f8f8 px solid;
+  border-bottom: #f8f8f8 2px solid;
   padding:20px;
   text-align: center;
 }
@@ -49,4 +49,11 @@ body {
     position: relative;
     text-align: justify;
     text-justify: inter-word;
+}
+
+
+/* Avatar
+-------------------------------------------------- */
+.menu-avatar {
+  margin: 1rem auto !important;
 }

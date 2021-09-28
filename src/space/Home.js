@@ -1,9 +1,12 @@
 import React, { useEffect, useState, createRef, createContext } from 'react';
-import { Switch, Route,  Link } from 'react-router-dom';
-import { Grid, List, Header, Menu, Container } from 'semantic-ui-react';
+import { Switch, Route, Link } from 'react-router-dom';
+import { Grid, List, Button, Menu, Image, Container } from 'semantic-ui-react';
 
 import { useRecoilState } from 'recoil';
 import { usernameState } from '../StateManager';
+
+import config from '../config';
+import { get } from '../utils/Request';
 
 import Profile from './Profile';
 import Works from './Works';
@@ -22,12 +25,12 @@ export function SpaceMenu() {
     const handleItemClick = (e, { name }) => setActiveItem(name);
 
     return (
-        <Menu text vertical>
-            <Menu.Item as={Link} to='/space'
+        <Menu text vertical className='menu-avatar'>
+            {/* <Menu.Item as={Link} to='/space'
                 name='我的空间'
                 active={activeItem === '我的空间'}
                 onClick={handleItemClick}
-            />
+            /> */}
             <Menu.Item as={Link} to='/space/profile'
                 name='个人资料'
                 active={activeItem === '个人资料'}
@@ -44,12 +47,26 @@ export function SpaceMenu() {
                 onClick={handleItemClick}
             />
         </Menu>
-        
     )
 }
 
-export default function SpaceHome() {
+function changeAvatar() {
+    get(config.API_URL + 'authors/change_avatar/', {}, true)
+        .then(function (res) {
+            if (res.data !== "") {
+                console.log(res.data)
+                let i = Math.random();
+                document.getElementById("Avatar").src = config.URL + res.data + ".svg?i=" + i;
+                document.getElementById("AvatarTiny").src = config.URL + res.data + ".svg?i=" + i;
+            }
+            else (
+                console.log('error')
+            )
+        })
+}
 
+
+export default function SpaceHome() {
     const [loading, setLoading] = useState(true);
     const [author, SetAuthor] = useState({})
     const [stages, SetStages] = useState([])
@@ -74,10 +91,9 @@ export default function SpaceHome() {
         <Container fluid>
             <Grid>
                 <Grid.Row>
-                    <Grid.Column width={3}>
-                        {/* <AuthorContext.Provider value={author}>
-                            <Info />
-                        </AuthorContext.Provider> */}
+                    <Grid.Column textAlign='center' width={3}>
+                        <Image src={config.API_URL + 'media/avatars/2021/' + username +'.svg'} size='small' centered id='Avatar'/>
+                        <Button size='tiny' onClick={changeAvatar} style={{margin: '1rem'}}>换头像</Button>
                         <SpaceMenu />
                     </Grid.Column>
                     <Grid.Column width={10}>

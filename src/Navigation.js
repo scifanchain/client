@@ -7,6 +7,7 @@ import { useRecoilState } from 'recoil';
 import { usernameState } from './StateManager';
 
 import { RemoveAuthorToken } from './utils/Storage';
+import config from './config';
 
 function Navigation() {
     // 导航图标激活样式
@@ -54,8 +55,12 @@ function Navigation() {
                 onClick={handleItemClick}>
             </Menu.Item> */}
             <Menu.Menu position='right'>
+                <Menu.Item>
+                    <Image src={config.URL + 'media/avatars/2021/' + username + '.svg'} avatar id='AvatarTiny' />
+                </Menu.Item>
                 {username &&
-                    <Dropdown text={username} pointing className='link item'>
+                    <Dropdown
+                        text={username} pointing className='link item'>
                         <Dropdown.Menu>
                             <Dropdown.Item as={Link} to='/space/home'>我的空间</Dropdown.Item>
                             <Dropdown.Item as={Link} to='/space/works'>我的作品</Dropdown.Item>

@@ -77,7 +77,7 @@ export default function CreateStage() {
                 .catch(function (error) {
                     console.log(error);
                 });
-            history.push('/space/works/');
+            window.location = '/space/works/';
         }
     }
 
@@ -86,7 +86,7 @@ export default function CreateStage() {
         <div>
             <div className='editor-wrap'>
                 <Input fluid placeholder='故事标题...' className='stage-title-input' onChange={handleChange} />
-                <div id='editorjs' className='editor-bg'></div>
+                <div id='editorjs' className='editor-content'></div>
                 <Button fluid style={{ marginTop: '1rem' }} onClick={postStage}>发表</Button>
             </div>
 

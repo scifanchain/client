@@ -31,6 +31,7 @@ export default function EditStage() {
                 setLoading(false);
                 console.log(res.data);
                 setStageTitle(res.data.title);
+                setStageContent(res.data.content)
 
                 // 加载编辑器
                 const editor = new EditorJS({
@@ -63,10 +64,10 @@ export default function EditStage() {
     // todo: 验证是否有重名标题，有的话给出提示
     function handleChange(e) {
         setStageTitle(e.target.value)
-        if (title.length >= 1) {
+        if (stageTitle.length >= 1) {
             setTitleError('')
         }
-        console.log(title)
+        console.log(stageTitle)
     }
 
     // 验证标题是否为空
@@ -83,7 +84,7 @@ export default function EditStage() {
     // 验证内容
     function contentValidated() {
         console.log(dataStage);
-        if (stageContent.blocks.length < 1) {
+        if (stageContent.length < 1) {
             setContentError("内容为空。如果你是从别的地方复制过来的内容，请在编辑器中做些修改，这样编辑器才能获取到内容。")
             return false
         }
@@ -107,14 +108,16 @@ export default function EditStage() {
         }
     }
 
-
     return (
         <div>
             <Button as={Link} to={'/space/stage/' + params.stage_id}>返回</Button>
             <Button.Group floated='right'>
                 <Button onClick={postStage}>提交修改</Button>
             </Button.Group>
-           <Divider/>
+            <Divider />
+            {contentError &&
+                <Message>{contentError}</Message>
+            }
             <div className='editor-wrap'>
                 <Input fluid className='stage-title-input' onChange={handleChange} value={ stageTitle }/>
                 <div id='editorjs' className='editor-content'></div>

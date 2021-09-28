@@ -1,8 +1,6 @@
-// React and Semantic UI elements.
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Button, Grid, Message, Modal, Input } from 'semantic-ui-react';
-// Pre-built Substrate front-end utilities for connecting to a node
-// and making a transaction.
+import { Form, Button, Grid, Message, Modal, Input, Menu, Segment } from 'semantic-ui-react';
+
 import { useSubstrate } from '../substrate-lib';
 import { TxButton } from '../substrate-lib/components';
 // Polkadot-JS utilities for hashing data.
@@ -25,11 +23,10 @@ export function Main(props) {
 
   const passwordInput = useRef('');
 
-
   // 对内容进行hash，触发poe校验
   const handlePoE = () => {
     let stageTitle = document.getElementById('stageTitle').innerHTML;
-    let stageContent = document.getElementById('stageContent').innerHTML;
+    let stageContent = document.getElementById('editorjs').innerHTML;
     const allContent = {
       title: stageTitle,
       Submitter_address: accountPair.address,
@@ -102,7 +99,7 @@ export function Main(props) {
     }
   }
 
-  function ModalExampleDimmer() {
+  function ModalUnlock() {
     const [state, dispatch] = React.useReducer(exampleReducer, {
       open: false,
       dimmer: undefined,
@@ -111,10 +108,9 @@ export function Main(props) {
 
     return (
       <div>
-        <Button onClick={() => dispatch({ type: 'OPEN_MODAL', dimmer: 'blurring' })}>
-          签署存证
-        </Button>
-
+        {/* <Button onClick={() => dispatch({ type: 'OPEN_MODAL', dimmer: 'blurring' })}>
+          解锁
+        </Button> */}
         <Modal
           size='tiny'
           dimmer={dimmer}
@@ -139,52 +135,125 @@ export function Main(props) {
     )
   }
 
+
+  const [activeItem, setActiveItem] = useState('check')
+
+  const activeCheck = () => {
+    setActiveItem('check');
+  }
+
+  const CheckPanel = () => {
+    return (
+      <div>
+        <p>点击下面的Hash按钮，可以比对本篇内容的是否有在链上存证，或在存证之后是否有新的改动。</p>
+        <Button onClick={handlePoE}>Hash</Button>
+        {!isClaimed &&
+          <Message success
+            icon='check circle'
+            header='根据本篇内容生成的以下Hash已在链上存证'
+            content={digest}
+          />
+        }
+        {isClaimed &&
+          <p>尚未存证</p>
+        }
+      </div>
+    )
+  }
+
+  const activeUnlok = () => {
+    setActiveItem('unlock');
+  }
+
+  const activePoE = () => {
+    setActiveItem('poe');
+  }
+
+  const activeRevoke = () => {
+    setActiveItem('revoke');
+  }
+
   // The actual UI elements which are returned from our component.
   return (
     <Grid.Column>
-      {/* Show warning or success message if the file is or is not claimed. */}
+      {/* <Button.Group>
+        <Button color='violet' onClick={handlePoE}>验证</Button>
+      </Button.Group> */}
+
+      <Grid>
+        <Grid.Column width={3}>
+          <Menu fluid vertical tabular>
+            <Menu.Item
+              name='存证状态'
+              active={activeItem === 'check'}
+              onClick={activeCheck}
+            />
+            <Menu.Item
+              name='解锁账号'
+              active={activeItem === 'unlock'}
+              onClick={activeUnlok}
+            />
+            <Menu.Item
+              name='上链存证'
+              active={activeItem === 'poe'}
+              onClick={activePoE}
+            />
+            <Menu.Item
+              name='撤消存证'
+              active={activeItem === 'revoke'}
+              onClick={activeRevoke}
+            />
+          </Menu>
+        </Grid.Column>
+
+        <Grid.Column stretched width={13}>
+          <Segment>
+            <CheckPanel />
+          </Segment>
+        </Grid.Column>
+      </Grid>
+
+      {accountPair.isLocked &&
+        <ModalUnlock />
+      }
+
       <Form success={!!digest && !isClaimed()} warning={isClaimed()}>
         {/* Buttons for interacting with the component. */}
-        <Form.Field>
-          {/* Button to create a claim. Only active if a file is selected,
+        {!accountPair &&
+          <Form.Field>
+            {/* Button to create a claim. Only active if a file is selected,
           and not already claimed. Updates the `status`. */}
-          <Button color='violet' onClick={handlePoE}>检查存证状态</Button>
-          <ModalExampleDimmer />
-
-          <TxButton
-            accountPair={accountPair}
-            label={'提交存证'}
-            setStatus={setStatus}
-            type='SIGNED-TX'
-            disabled={isClaimed() || !digest}
-            attrs={{
-              palletRpc: 'poe',
-              callable: 'createProof',
-              inputParams: [digest],
-              paramFields: [true]
-            }}
-          />
-          {/* Button to revoke a claim. Only active if a file is selected,
+            <Button.Group>
+              <TxButton
+                accountPair={accountPair}
+                label={'提交存证'}
+                setStatus={setStatus}
+                type='SIGNED-TX'
+                disabled={isClaimed() || !digest}
+                attrs={{
+                  palletRpc: 'poe',
+                  callable: 'createProof',
+                  inputParams: [digest],
+                  paramFields: [true]
+                }}
+              />
+              {/* Button to revoke a claim. Only active if a file is selected,
           and is already claimed. Updates the `status`. */}
-          <TxButton
-            accountPair={accountPair}
-            label='撤消存证'
-            setStatus={setStatus}
-            type='SIGNED-TX'
-            disabled={!isClaimed() || owner !== accountPair.address}
-            attrs={{
-              palletRpc: 'poe',
-              callable: 'revokeProof',
-              inputParams: [digest],
-              paramFields: [true]
-            }}
-          />
-        </Form.Field>
-        {/* Status message about the transaction. */}
-        {digest &&
-          <Message>
-            <p>{digest}</p>
-          </Message>
+              <TxButton
+                accountPair={accountPair}
+                label='撤消存证'
+                setStatus={setStatus}
+                type='SIGNED-TX'
+                disabled={!isClaimed() || owner !== accountPair.address}
+                attrs={{
+                  palletRpc: 'poe',
+                  callable: 'revokeProof',
+                  inputParams: [digest],
+                  paramFields: [true]
+                }}
+              />
+            </Button.Group>
+          </Form.Field>
         }
 
         {/* Status message about the transaction. */}
@@ -198,6 +267,7 @@ export function Main(props) {
         }
 
       </Form>
+
       {unlockError &&
         <Message>{unlockError}</Message>
       }
