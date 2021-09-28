@@ -142,25 +142,26 @@ function Main() {
     };
 
     useEffect(() => {
-        get('authors/my_wallets/' + storage.getItem('scifanchain_user_id') + '/', {}, true).then((res) => {
-            console.log(res)
-            if (res.data.address) {
-                setAddress(res.data.address)
-                setPublicKey(res.data.publickey)
-                getBalance(res.data.address).then((res) => {
-                    console.log(res);
-                    // 将字符串转为对象
-                    const obj = JSON.parse(res)
-                    console.log(parseInt(obj.nonce))
-                    setMyBalance(obj.balance.free)
-                    setMyNonce(parseInt(obj.nonce))
-                    console.log("complete");
-                });
-            }
-            else {
-                setHasAddress(false)
-            }
-        });
+        get('authors/my_wallets/' + storage.getItem('scifanchain_user_id') + '/', {}, true)
+            .then((res) => {
+                console.log(res)
+                if (res.data.address) {
+                    setAddress(res.data.address)
+                    setPublicKey(res.data.publickey)
+                    getBalance(res.data.address).then((res) => {
+                        console.log(res);
+                        // 将字符串转为对象
+                        const obj = JSON.parse(res)
+                        console.log(parseInt(obj.nonce))
+                        setMyBalance(obj.balance.free)
+                        setMyNonce(parseInt(obj.nonce))
+                        console.log("complete");
+                    });
+                }
+                else {
+                    setHasAddress(false)
+                }
+            });
     }, [])
 
     const generateMnemonic = () => {
@@ -189,7 +190,7 @@ function Main() {
         </div>
     )
 
-    
+
     // 生成keypari
     const generateKeypair = () => {
         // add the account, encrypt the stored JSON with an account-specific password

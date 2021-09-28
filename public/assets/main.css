@@ -21,6 +21,12 @@ body {
 
 /* 前端创作编辑器
 -------------------------------------------------- */
+.stage-title {
+  background-color: white;
+  border-bottom: #f8f8f8 px solid;
+  padding:20px;
+  text-align: center;
+}
 .stage-title-input {
   margin-bottom: 1rem;
 }
@@ -29,7 +35,7 @@ body {
   padding: 2rem;
   border-radius: 10px;
 }
-.editor-bg {
+.editor-content {
   background-color:white;
   padding: 2rem 0;
 }

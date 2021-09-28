@@ -112,3 +112,13 @@ export const post = (url, params = {}, isNeedToken = true) => {
         data: params,
     })
 }
+
+// post 默认需要 Token
+export const put = (url, params = {}, isNeedToken = true) => {
+    setHeaderToken(isNeedToken)
+    return instance({
+        method: 'put',
+        url,
+        data: params,
+    })
+}

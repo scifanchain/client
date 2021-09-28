@@ -9,6 +9,7 @@ import Profile from './Profile';
 import Works from './Works';
 import Wallet from './Wallet';
 import CreateStage from './CreateStage';
+import EditStage from './EditStage';
 import StageList from './StageList';
 import StageDetail from './StageDetail';
 
@@ -84,8 +85,9 @@ export default function SpaceHome() {
                             <Route path='/space/profile' component={Profile} />
                             <Route path='/space/works' component={Works} />
                             <Route path='/space/wallet' component={Wallet} />
-                            <Route path='/space/stage/create' component={CreateStage} />
                             <Route path='/space/stages' component={StageList} />
+                            <Route path='/space/stage/create' component={CreateStage} />
+                            <Route path='/space/stage/edit/:stage_id' component={EditStage} />
                             <Route path='/space/stage/:stage_id' component={StageDetail} />
                         </Switch>
                         {/* <StageEditor stage={{}} /> */}
