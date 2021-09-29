@@ -54,11 +54,11 @@ function Navigation() {
                 active={activeItem === '时空桥'}
                 onClick={handleItemClick}>
             </Menu.Item> */}
-            <Menu.Menu position='right'>
-                <Menu.Item>
-                    <Image src={config.URL + 'media/avatars/2021/' + username + '.svg'} avatar id='AvatarTiny' />
-                </Menu.Item>
-                {username &&
+            {username &&
+                <Menu.Menu position='right'>
+                    <Menu.Item>
+                        <Image src={config.URL + 'media/avatars/2021/' + username + '.svg'} avatar id='AvatarTiny' />
+                    </Menu.Item>
                     <Dropdown
                         text={username} pointing className='link item'>
                         <Dropdown.Menu>
@@ -72,22 +72,23 @@ function Navigation() {
                             </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                }
-                {!username &&
+                </Menu.Menu>
+            }
+            {!username &&
+                <Menu.Menu position='right'>
                     <Menu.Item as={Link} to='/sign-in'
                         name='登录'
                         active={activeItem === '登录'}
                         onClick={handleItemClick}>
                     </Menu.Item>
-                }
-                {!username &&
                     <Menu.Item as={Link} to='/sign-up'
                         name='注册'
                         active={activeItem === '注册'}
                         onClick={handleItemClick}>
                     </Menu.Item>
-                }
-            </Menu.Menu>
+                </Menu.Menu>
+            }
+
         </Menu>
     );
 };

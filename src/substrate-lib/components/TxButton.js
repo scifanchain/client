@@ -6,7 +6,7 @@ import { web3FromSource } from '@polkadot/extension-dapp';
 import { useSubstrate } from '../';
 import utils from '../utils';
 
-function TxButton ({
+function TxButton({
   accountPair = null,
   label,
   setStatus,
@@ -62,11 +62,11 @@ function TxButton ({
 
   const txResHandler = ({ status }) =>
     status.isFinalized
-      ? setStatus(`😉 Finalized. Block hash: ${status.asFinalized.toString()}`)
-      : setStatus(`Current transaction status: ${status.type}`);
+      ? setStatus(`😉 完成。Block hash: ${status.asFinalized.toString()}`)
+      : setStatus(`当前交易状态: ${status.type}`);
 
   const txErrHandler = err =>
-    setStatus(`😞 Transaction Failed: ${err.toString()}`);
+    setStatus(`😞 失败: ${err.toString()}`);
 
   const sudoTx = async () => {
     const fromAcct = await getFromAcct();

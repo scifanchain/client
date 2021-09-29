@@ -6,6 +6,8 @@ import { TxButton } from '../substrate-lib/components';
 // Polkadot-JS utilities for hashing data.
 import { blake2AsHex } from '@polkadot/util-crypto';
 
+import { put } from '../utils/Request';
+
 
 export function Main(props) {
   // Establish an API to talk to our Substrate node.
@@ -15,47 +17,39 @@ export function Main(props) {
   // React hooks for all the state variables we track.
   // Learn more at: https://reactjs.org/docs/hooks-intro.html
   const [status, setStatus] = useState('');
-  const [digest, setDigest] = useState(stage.digest ? stage.digest : '');
+  const [digestOld, setDigestOld] = useState(stage.digest ? stage.digest : '');
+  const [digest, setDigest] = useState('');
   const [owner, setOwner] = useState('');
   const [block, setBlock] = useState(0);
   const [unlockError, setUnlockError] = useState(null);
   const [showModal, setShowModal] = useState(false)
 
-  const [activeItem, setActiveItem] = useState('check')
-
-  const activeCheck = () => {
-    setActiveItem('check');
-  }
-
   const passwordInput = useRef('');
 
-  // 对内容进行hash，触发poe校验
-  const handlePoE = () => {
+
+  // 哈希内容
+  const HashStage = (address, stage) => {
     const allContent = {
+      Submitter_address: address,
       stage: stage,
-      Submitter_address: accountPair.address,
     }
     const jsonContent = JSON.stringify(allContent)
     const hash = blake2AsHex(jsonContent, 256);
-    console.log(hash);
     setDigest(hash);
-    queryPoE();
-    if (block === 0) {
-      setActiveItem('unlock');
-      document.getElementById('unlock-menu').disabled = '';
-    }
   }
 
+
+  // 链上查询
   const queryPoE = () => {
     let unsubscribe;
 
     // Polkadot-JS API query to the `proofs` storage item in our pallet.
     // This is a subscription, so it will always get the latest value,
     // even if it changes.
-    console.log(digest);
     api.query.poe
       .proofs(digest, (result) => {
         // Our storage item returns a tuple, which is represented as an array.
+        console.log(digest);
         setOwner(result[0].toString());
         setBlock(result[1].toNumber());
         console.log(result[0]);
@@ -73,6 +67,7 @@ export function Main(props) {
 
   // React hook to update the owner and block number information for a file.
   useEffect(() => {
+    HashStage(accountPair.address, stage)
     queryPoE();
   }, [digest, api.query.templateModule]);
 
@@ -97,26 +92,84 @@ export function Main(props) {
       console.log(error);
       return setUnlockError('解锁失败，可能密码不正确，请重新尝试。');
     }
-    setActiveItem('poe')
   }
 
+
   const PoEPanel = () => {
+    return (
+      <Message>
+        <Message.Header>版本内容的存证状态</Message.Header>
+        {digestOld &&
+          <p>{digestOld}</p>
+        }
+        {!digestOld &&
+          <p>之前的Hash值：{digestOld ? digestOld : '无'}</p>
+        }
+        <Button onClick={queryPoE}>Hash</Button>
+        {digest &&
+          <p>当前的Hash值：{digest}</p>
+        }
+
+        <div>
+          {isClaimed &&
+            <Message success
+              icon='check circle'
+              header='本篇内容已在链上存证。'
+              content={digest}
+            />
+          }
+          <TxButton
+            accountPair={accountPair}
+            label='撤消存证'
+            setStatus={setStatus}
+            type='SIGNED-TX'
+            disabled={!isClaimed() || owner !== accountPair.address}
+            attrs={{
+              palletRpc: 'poe',
+              callable: 'revokeProof',
+              inputParams: [digest],
+              paramFields: [true]
+            }}
+          />
+          <TxButton
+            color={''}
+            accountPair={accountPair}
+            label={'提交存证'}
+            setStatus={setStatus}
+            type='SIGNED-TX'
+            disabled={isClaimed() || !digest}
+            attrs={{
+              palletRpc: 'poe',
+              callable: 'createProof',
+              inputParams: [digest],
+              paramFields: [true]
+            }}
+          />
+
+        </div>
+
+      </Message>
+    )
+  }
+
+
+  const PoEPanel2 = () => {
     return (
       <div>
         {digest && activeItem === 'check' &&
           <p>点击下面的Hash按钮，验证当前版本的内容是否已在链上存证。</p>
         }
-        {!digest && activeItem === 'check' &&
+        {!digest && activeItem === 'check' && !isClaimed &&
           <p>当前版本的内容尚未存证。如果想在链上存证，请点击以下按钮Hash当前版本。</p>
         }
-        {activeItem === 'check' &&
+        {activeItem === 'check' && !isClaimed &&
           <Button onClick={handlePoE}>Hash</Button>
         }
-        {!isClaimed &&
+        {isClaimed &&
           <div>
             <Message success
               icon='check circle'
-              header='根据本篇内容生成的以下Hash已在链上存证。'
+              header='本篇内容已在链上存证。'
               content={digest}
             />
             <TxButton
@@ -136,11 +189,8 @@ export function Main(props) {
         }
         {isClaimed && digest && activeItem === 'unlock' &&
           <div>
-            <Message success
-              icon='hashtag'
-              header='根据本篇内容生成以下Hash，请解锁账号后，提交存证。'
-              content={digest}
-            />
+            <div>本版本内容尚未存证。已根据现有内容生成以下Hash，请解锁账号后提交存证。</div>
+            <p style={{ color: 'Orange' }}>{digest}</p>
             {accountPair.isLocked &&
               <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
                 <input />
@@ -148,25 +198,20 @@ export function Main(props) {
               </Input>
             }
             {unlockError &&
-              <Message compact size='mini' negative style={{ marginLeft: 1 + 'rem' }}>{unlockError}</Message>
+              <span style={{ marginLeft: 1 + 'rem', color: 'red' }}>{unlockError}</span>
             }
             {!unlockError && !accountPair.isLocked &&
-              < Message compact size='mini' success style={{ marginLeft: 1 + 'rem' }}><Icon name='lock open' /> 账号已解锁。</Message>
+              <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 账号已解锁。</span>
             }
           </div>
         }
-        {activeItem === 'unlock' && !digest &&
-          <div>
-            <p>请先验证存证状态，查看当前作品的Hash值。</p>
-          </div>
-        }
-        {
-          activeItem === 'poe' &&
+        {activeItem === 'poe' &&
           <Form success={!!digest && !isClaimed()} warning={isClaimed()}>
             <Form.Field>
               <p>点击以下按钮即可提交当前版本到链上进行存证。存证的Hash内容由作品的内容、创作者、创作时间、更新时间、历史版本等构成，具有唯一性。作品存证后，即可得到适当的通证奖励（主网上线后）。</p>
               <Button.Group>
                 <TxButton
+                  color={''}
                   accountPair={accountPair}
                   label={'提交存证'}
                   setStatus={setStatus}
@@ -190,64 +235,15 @@ export function Main(props) {
                 </p>
               </Message>
             }
-
           </Form>
         }
       </div >
     )
   }
 
-  const activeUnlok = () => {
-    setActiveItem('unlock');
-  }
-
-  const activePoE = () => {
-    setActiveItem('poe');
-  }
-
-  const activeRevoke = () => {
-    setActiveItem('revoke');
-  }
-
   // The actual UI elements which are returned from our component.
   return (
-    <Grid.Column>
-      <Grid>
-        <Grid.Column width={3}>
-          <Menu fluid vertical tabular>
-            <Menu.Item
-              name='存证状态'
-              active={activeItem === 'check'}
-              onClick={activeCheck}
-            />
-            <Menu.Item disabled
-              id='unlock-menu'
-              name='解锁账号'
-              active={activeItem === 'unlock'}
-              onClick={activeUnlok}
-            />
-            <Menu.Item
-              name='上链存证' disabled
-              active={activeItem === 'poe'}
-              onClick={activePoE}
-            />
-            {!isClaimed && activeItem === 'revode' &&
-              <Menu.Item
-              name='撤消存证' disabled
-                active={activeItem === 'revoke'}
-                onClick={activeRevoke}
-              />
-            }
-          </Menu>
-        </Grid.Column>
-
-        <Grid.Column stretched width={13}>
-          <Segment>
-            <PoEPanel />
-          </Segment>
-        </Grid.Column>
-      </Grid>
-    </Grid.Column>
+    <PoEPanel />
   );
 }
 

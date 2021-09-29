@@ -173,7 +173,7 @@ export function Main() {
         // 同步用户全局状态
         setUsernameGlobal(res.data.username);
 
-        history.push('/space');
+        history.push('/space/profile');
       }
       else {
         console.log(res.data.error)

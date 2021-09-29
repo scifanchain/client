@@ -44,7 +44,7 @@ function SignIn() {
         }).then(res => {
             setUsername(state.username)
             SaveAuthorToken(state.username, res.data);
-            history.push('/space');
+            history.push('/space/profile');
         }).catch(err => {
             setState({ ...state, dissplay_hidden: false });
             console.log(err);

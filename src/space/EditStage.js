@@ -94,8 +94,11 @@ export default function EditStage() {
     // 提交
     const postStage = () => {
         if (titleValidated() && contentValidated()) {
-            put('works/stage/update/'+params.stage_id + '/', { "title": stageTitle, "content": stageContent, "owner": storage.getItem('scifanchain_user_id') }, true)
-                .then(function (response) {
+            put(
+                'works/stage/update/' + params.stage_id + '/',
+                { "title": stageTitle, "content": stageContent, "owner": storage.getItem('scifanchain_user_id') },
+                true
+            ).then(function (response) {
                     console.log(response);
                 })
                 .catch(function (error) {

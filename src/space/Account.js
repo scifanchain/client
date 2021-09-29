@@ -33,7 +33,7 @@ function Main() {
         password_repeat: '',
     });
 
-    const [myBalance, setMyBalance] = useState(0)
+    const [myBalance, setMyBalance] = useState('')
     const [myNonce, setMyNonce] = useState(0)
 
     const name_ref = useRef('');
@@ -135,9 +135,9 @@ function Main() {
 
         console.log(`${now}: balance of ${balance.free} and a nonce of ${nonce}`);
 
-        const account = JSON.stringify({ balance, nonce })
+        const account = { balance, nonce }
 
-        return account
+        return account;
 
     };
 
@@ -149,12 +149,9 @@ function Main() {
                     setAddress(res.data.address)
                     setPublicKey(res.data.publickey)
                     getBalance(res.data.address).then((res) => {
-                        console.log(res);
-                        // 将字符串转为对象
-                        const obj = JSON.parse(res)
-                        console.log(parseInt(obj.nonce))
-                        setMyBalance(obj.balance.free)
-                        setMyNonce(parseInt(obj.nonce))
+                        console.log(res.nonce.toHuman());
+                        setMyBalance(res.balance.free.toHuman())
+                        setMyNonce(res.nonce.toHuman())
                         console.log("complete");
                     });
                 }
