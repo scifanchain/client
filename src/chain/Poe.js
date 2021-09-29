@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Button, Grid, Message, Modal, Input, Menu, Segment } from 'semantic-ui-react';
+import { Form, Button, Grid, Message, Icon, Input, Menu, Segment } from 'semantic-ui-react';
 
 import { useSubstrate } from '../substrate-lib';
 import { TxButton } from '../substrate-lib/components';
@@ -42,6 +42,7 @@ export function Main(props) {
     queryPoE();
     if (block === 0) {
       setActiveItem('unlock');
+      document.getElementById('unlock-menu').disabled = '';
     }
   }
 
@@ -94,16 +95,16 @@ export function Main(props) {
       setUnlockError(null)
     } catch (error) {
       console.log(error);
-      return setUnlockError('解锁失败，可能密码不正确或遇到网络故章，请重新尝试。');
+      return setUnlockError('解锁失败，可能密码不正确，请重新尝试。');
     }
     setActiveItem('poe')
   }
 
-  const CheckPanel = () => {
+  const PoEPanel = () => {
     return (
       <div>
         {digest && activeItem === 'check' &&
-          <p>点击下面的Hash按钮，验证当前内容是否有新的改动。</p>
+          <p>点击下面的Hash按钮，验证当前版本的内容是否已在链上存证。</p>
         }
         {!digest && activeItem === 'check' &&
           <p>当前版本的内容尚未存证。如果想在链上存证，请点击以下按钮Hash当前版本。</p>
@@ -133,26 +134,37 @@ export function Main(props) {
             />
           </div>
         }
-        {isClaimed && digest && activeItem == 'unlock' &&
+        {isClaimed && digest && activeItem === 'unlock' &&
           <div>
             <Message success
-              icon='check circle'
+              icon='hashtag'
               header='根据本篇内容生成以下Hash，请解锁账号后，提交存证。'
               content={digest}
             />
-            <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
-              <input />
-              <Button type='submit' onClick={checkAccount}>解锁账号</Button>
-            </Input>
+            {accountPair.isLocked &&
+              <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
+                <input />
+                <Button type='submit' onClick={checkAccount}>解锁账号</Button>
+              </Input>
+            }
             {unlockError &&
               <Message compact size='mini' negative style={{ marginLeft: 1 + 'rem' }}>{unlockError}</Message>
             }
+            {!unlockError && !accountPair.isLocked &&
+              < Message compact size='mini' success style={{ marginLeft: 1 + 'rem' }}><Icon name='lock open' /> 账号已解锁。</Message>
+            }
           </div>
         }
-        {activeItem === 'poe' &&
+        {activeItem === 'unlock' && !digest &&
+          <div>
+            <p>请先验证存证状态，查看当前作品的Hash值。</p>
+          </div>
+        }
+        {
+          activeItem === 'poe' &&
           <Form success={!!digest && !isClaimed()} warning={isClaimed()}>
             <Form.Field>
-              <p>点击以下按钮提交存证。</p>
+              <p>点击以下按钮即可提交当前版本到链上进行存证。存证的Hash内容由作品的内容、创作者、创作时间、更新时间、历史版本等构成，具有唯一性。作品存证后，即可得到适当的通证奖励（主网上线后）。</p>
               <Button.Group>
                 <TxButton
                   accountPair={accountPair}
@@ -208,19 +220,20 @@ export function Main(props) {
               active={activeItem === 'check'}
               onClick={activeCheck}
             />
-            <Menu.Item
+            <Menu.Item disabled
+              id='unlock-menu'
               name='解锁账号'
               active={activeItem === 'unlock'}
               onClick={activeUnlok}
             />
             <Menu.Item
-              name='上链存证'
+              name='上链存证' disabled
               active={activeItem === 'poe'}
               onClick={activePoE}
             />
             {!isClaimed && activeItem === 'revode' &&
               <Menu.Item
-                name='撤消存证'
+              name='撤消存证' disabled
                 active={activeItem === 'revoke'}
                 onClick={activeRevoke}
               />
@@ -230,7 +243,7 @@ export function Main(props) {
 
         <Grid.Column stretched width={13}>
           <Segment>
-            <CheckPanel />
+            <PoEPanel />
           </Segment>
         </Grid.Column>
       </Grid>
