@@ -11,15 +11,13 @@ import { get } from '../utils/Request';
 import Poe from '../chain/Poe';
 
 
-function PoE() {
-    // 接收跳转参数
-    const params = useParams();
-
+function PoEPanel(props) {
     const storage = window.localStorage;
-    const { apiState, keyring, keyringState, apiError } = useSubstrate();
+    const {apiState, keyring, keyringState, apiError } = useSubstrate();
 
     const [accountAddress, setAccountAddress] = useState('');
-    const [stageContent, setStageContent] = useState('')
+
+    const { stage } = props;
 
     useEffect(() => {
         get('authors/my_wallets/' + storage.getItem('scifanchain_user_id') + '/', {}, true).then((res) => {
@@ -39,7 +37,7 @@ function PoE() {
         </Dimmer>;
 
     if (apiState === 'ERROR') return message(apiError);
-    else if (apiState !== 'READY') return loader('正在连接赛凡链……');
+    else if (apiState !== 'READY') return loader('正在连接链上数据……');
 
     if (keyringState !== 'READY') {
         return loader('Loading accounts (please review any extension\'s authorization)');
@@ -48,21 +46,20 @@ function PoE() {
     return (
         <div>
             {accountPair &&
-                <Poe accountPair={accountPair} />
+                <Poe accountPair={accountPair} stage={stage} />
             }
-            <Divider />
         </div>
     )
-}
+};
 
-function Stage() {
+
+export default function StageDetail() {
     // 接收跳转参数
     const params = useParams();
 
-    const [stageTitle, setStageTitle] = useState('')
+    const [stage, setStage] = useState({})
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-
 
     // 加载数据
     useEffect(() => {
@@ -71,7 +68,7 @@ function Stage() {
                 // 处理成功情况
                 setLoading(false);
                 console.log(res.data);
-                setStageTitle(res.data.title);
+                setStage(res.data);
 
                 // 加载编辑器
                 const editor = new EditorJS({
@@ -80,14 +77,12 @@ function Stage() {
                     readOnly: true,
                     minHeight: 0,
                 })
-
                 setError('');
-                // console.log(response);
             })
             .catch(function (error) {
                 // 处理错误情况
                 setLoading(false)
-                setStageContent({})
+                setStage({})
                 setError('很抱歉，没有获取到数据！')
                 console.log(error);
             });
@@ -95,27 +90,19 @@ function Stage() {
 
     return (
         <div>
-            <div style={{height: 4+'rem'}}>
+            <SubstrateContextProvider>
+                <PoEPanel stage={ stage }/>
+            </SubstrateContextProvider>
+            <div style={{ height: 3 + 'rem', marginTop: 1 + 'rem' }}>
                 <Button.Group floated='right'>
                     <Button icon as={Link} to={'/space/stage/edit/' + params.stage_id} style={{ marginBottom: 1 + 'rem' }}>
                         <Icon name='edit' /> 修改</Button>
                 </Button.Group>
             </div>
             <div className='editor-wrap'>
-                <h2 className='stage-title' id='stageTitle'>{stageTitle}</h2>
+                <h2 className='stage-title' id='stageTitle'>{stage.title}</h2>
                 <div id="editorjs" className='editor-content'></div>
             </div>
         </div>
-    )
-}
-
-export default function StageDetail() {
-    return (
-        <div>
-            <SubstrateContextProvider>
-                <PoE />
-            </SubstrateContextProvider>
-            <Stage />
-        </div>
     );
-}
+};

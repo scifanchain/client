@@ -62,10 +62,10 @@ function Navigation() {
                     <Dropdown
                         text={username} pointing className='link item'>
                         <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to='/space/home'>我的空间</Dropdown.Item>
+                            {/* <Dropdown.Item as={Link} to='/space/home'>我的空间</Dropdown.Item> */}
+                            <Dropdown.Item as={Link} to='/space/profile'>个人资料</Dropdown.Item>
                             <Dropdown.Item as={Link} to='/space/works'>我的作品</Dropdown.Item>
                             <Dropdown.Item as={Link} to='/space/wallet'>我的钱包</Dropdown.Item>
-                            <Dropdown.Item as={Link} to='/space/profile'>账号设置</Dropdown.Item>
                             <Dropdown.Divider />
                             <Dropdown.Item onClick={handleLogout}>
                                 退出

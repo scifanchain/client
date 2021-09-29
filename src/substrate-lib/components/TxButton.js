@@ -10,7 +10,7 @@ function TxButton ({
   accountPair = null,
   label,
   setStatus,
-  color = 'blue',
+  color = '',
   style = null,
   type = 'QUERY',
   attrs = null,
@@ -214,7 +214,6 @@ function TxButton ({
 
   return (
     <Button
-      basic
       color={color}
       style={style}
       type='submit'
