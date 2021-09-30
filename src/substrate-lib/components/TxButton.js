@@ -62,7 +62,7 @@ function TxButton({
 
   const txResHandler = ({ status }) =>
     status.isFinalized
-      ? setStatus(`😉 完成。Block hash: ${status.asFinalized.toString()}`)
+      ? setStatus(`😉 完成。您的操作已被记录于Block: ${status.asFinalized.toString()}`)
       : setStatus(`当前交易状态: ${status.type}`);
 
   const txErrHandler = err =>

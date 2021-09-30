@@ -20,7 +20,6 @@ export function Main(props) {
   const [digest, setDigest] = useState('');
   const [owner, setOwner] = useState('');
   const [block, setBlock] = useState(0);
-  const [unlocking, setUnlocking] = useState(false);
   const [unlockError, setUnlockError] = useState(null);
 
   const passwordInput = useRef('');
@@ -76,15 +75,12 @@ export function Main(props) {
   }
 
   function checkAccount(e) {
-    setUnlocking(true);
     try {
       accountPair.decodePkcs8(passwordInput.current);
       setUnlockError(null)
-      setUnlocking(false);
     } catch (error) {
       console.log(error);
       setUnlockError('解锁失败，请更换密码重新尝试。');
-      setUnlocking(false);
     }
   }
 
@@ -96,14 +92,14 @@ export function Main(props) {
           通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
         </p>
         <Button onClick={queryPoE}>Hash</Button>
-        {digest && isClaimed &&
+        {digest && !isClaimed &&
           <Message warning
             icon='sync'
             header='本内容没有在链上存证。'
             content={digest}
           />
         }
-        {!isClaimed &&
+        {isClaimed &&
           <Message success
             icon='check circle'
             header='本内容已在链上存证。'
@@ -119,7 +115,10 @@ export function Main(props) {
               <Button type='submit' onClick={checkAccount} loading={unlocking}>解锁钱包账号</Button>
             </Input>
             {unlockError &&
-            <span style={{ marginLeft: 1 + 'rem', color: 'red' }}><Icon name='lock' /> {unlockError}</span>
+              <span style={{ marginLeft: 1 + 'rem', color: 'red' }}><Icon name='lock' /> {unlockError}</span>
+            }
+            {!unlockError && !accountPair.isLocked &&
+              <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
             }
           </div>
         }
