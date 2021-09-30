@@ -349,7 +349,7 @@ function Main() {
         <Table celled striped>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell colSpan='3'>赛凡Wallet</Table.HeaderCell>
+                    <Table.HeaderCell colSpan='3'>赛凡通证</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
 

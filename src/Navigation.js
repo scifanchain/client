@@ -34,17 +34,17 @@ function Navigation() {
                 content="赛凡首页"
                 onClick={handleItemClick}>
             </Menu.Item>
-            <Menu.Item as={Link} to='/galaxy'
+            <Menu.Item as={Link} to='/works'
                 name='作品'
                 active={activeItem === '作品'}
                 onClick={handleItemClick}>
             </Menu.Item>
-            <Menu.Item as={Link} to='/stars'
+            <Menu.Item as={Link} to='/community'
                 name='社区'
                 active={activeItem === '社区'}
                 onClick={handleItemClick}>
             </Menu.Item>
-            <Menu.Item as={Link} to='/finance'
+            <Menu.Item as={Link} to='/blogs'
                 name='博客'
                 active={activeItem === '博客'}
                 onClick={handleItemClick}>

@@ -2,41 +2,10 @@ import React, { useEffect, useState, createRef } from 'react';
 import { Grid, Advertisement, Segment, Button, Label, Header, Image } from 'semantic-ui-react'
 import StageList from './story/StageList';
 import List from './author/List';
-import Step from './author/Step';
 
 const contextRef = createRef();
 
-
-
-
 function Home() {
-  const GridExampleDividedNumber = () => (
-    <Grid columns={3} divided>
-      <Grid.Row>
-        <Grid.Column>
-          <Image src='/images/wireframe/media-paragraph.png' />
-        </Grid.Column>
-        <Grid.Column>
-          <Image src='/images/wireframe/media-paragraph.png' />
-        </Grid.Column>
-        <Grid.Column>
-          <Image src='/images/wireframe/media-paragraph.png' />
-        </Grid.Column>
-      </Grid.Row>
-
-      <Grid.Row>
-        <Grid.Column>
-          <Image src='/images/wireframe/media-paragraph.png' />
-        </Grid.Column>
-        <Grid.Column>
-          <Image src='/images/wireframe/media-paragraph.png' />
-        </Grid.Column>
-        <Grid.Column>
-          <Image src='/images/wireframe/media-paragraph.png' />
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
-  )
 
   return (
     <Grid>
@@ -97,8 +66,6 @@ function Home() {
           <Advertisement unit='panorama' test='无论是一个有想象力的创意，还是一篇科幻故事，都可以在以区块链为主导的Web3.0时代彰显其从前被忽视的价值。'
             style={{ width: "100%", marginBottom: "1rem" }}
           />
-          <Step />
-          <GridExampleDividedNumber/>
           <Header as='h3'>
             最新作品
           </Header>

@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react'
-import axios from 'axios'
-import {List } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { List } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+
+import config from '../config';
+import { get } from '../utils/Request';
 
 function StageList () {
     const [loading, setLoading] = useState(true);
@@ -9,13 +11,11 @@ function StageList () {
     const [error, setError] = useState('')
 
     useEffect(() => {
-        let token = window.localStorage.getItem("scifanchain_access_token")
-        axios.defaults.headers.common["Authorization"] = "Bearer "+ token;
-        axios.get('https://api.scifanchain.com/stages/')
+        get(config.API_URL + 'api/stages/')
             .then(function (response) {
                 // 处理成功情况
                 setLoading(false)
-                setStages(response.data)
+                setStages(response.data.results)
                 setError('')
                 console.log(response);
             })
@@ -35,6 +35,8 @@ function StageList () {
             }
         }>
             {stage.title}
+            <p>{ stage.created}</p>
+            <p>{ stage.owner.username}</p>
         </List.Item>
     ));
 
