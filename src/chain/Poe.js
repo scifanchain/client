@@ -82,6 +82,9 @@ export function Main(props) {
       console.log(error);
       setUnlockError('解锁失败，请更换密码重新尝试。');
     }
+    finally {
+      console.log("completed");
+    }
   }
 
   const PoEPanel = () => {
@@ -92,14 +95,14 @@ export function Main(props) {
           通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
         </p>
         <Button onClick={queryPoE}>Hash</Button>
-        {digest && !isClaimed &&
+        {digest && block === 0 &&
           <Message warning
             icon='sync'
             header='本内容没有在链上存证。'
             content={digest}
           />
         }
-        {isClaimed &&
+        {block !== 0 &&
           <Message success
             icon='check circle'
             header='本内容已在链上存证。'
@@ -112,21 +115,16 @@ export function Main(props) {
             <p>进行链上存证或撤消操作，需要解锁您的令牌（钱包）账号。</p>
             <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
               <input />
-              <Button type='submit' onClick={checkAccount} loading={unlocking}>解锁钱包账号</Button>
+              <Button type='submit' onClick={checkAccount}>解锁钱包账号</Button>
             </Input>
-            {unlockError &&
-              <span style={{ marginLeft: 1 + 'rem', color: 'red' }}><Icon name='lock' /> {unlockError}</span>
-            }
-            {!unlockError && !accountPair.isLocked &&
-              <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
-            }
           </div>
         }
-
+        {unlockError &&
+          <span style={{ marginLeft: 1 + 'rem', color: 'red' }}><Icon name='lock' /> {unlockError}</span>
+        }
         {!unlockError && !accountPair.isLocked &&
           <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
         }
-
         {!accountPair.isLocked &&
           <div style={{ marginTop: 1 + 'rem' }}>
             <TxButton
