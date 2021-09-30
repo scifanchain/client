@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Button, Grid, Message, Icon, Input, Menu, Segment } from 'semantic-ui-react';
+import { Form, Button, Message, Icon, Input, Loader, } from 'semantic-ui-react';
 
 import { useSubstrate } from '../substrate-lib';
 import { TxButton } from '../substrate-lib/components';
@@ -17,18 +17,17 @@ export function Main(props) {
   // React hooks for all the state variables we track.
   // Learn more at: https://reactjs.org/docs/hooks-intro.html
   const [status, setStatus] = useState('');
-  const [digestOld, setDigestOld] = useState(stage.digest ? stage.digest : '');
   const [digest, setDigest] = useState('');
   const [owner, setOwner] = useState('');
   const [block, setBlock] = useState(0);
+  const [unlocking, setUnlocking] = useState(false);
   const [unlockError, setUnlockError] = useState(null);
-  const [showModal, setShowModal] = useState(false)
 
   const passwordInput = useRef('');
 
 
   // 哈希内容
-  const HashStage = (address, stage) => {
+  const hashStage = (address, stage) => {
     const allContent = {
       Submitter_address: address,
       stage: stage,
@@ -36,24 +35,26 @@ export function Main(props) {
     const jsonContent = JSON.stringify(allContent)
     const hash = blake2AsHex(jsonContent, 256);
     setDigest(hash);
+    return hash;
   }
 
 
   // 链上查询
   const queryPoE = () => {
+    const hash = hashStage(accountPair.address, stage);
+
     let unsubscribe;
 
     // Polkadot-JS API query to the `proofs` storage item in our pallet.
     // This is a subscription, so it will always get the latest value,
     // even if it changes.
     api.query.poe
-      .proofs(digest, (result) => {
+      .proofs(hash, (result) => {
         // Our storage item returns a tuple, which is represented as an array.
-        console.log(digest);
         setOwner(result[0].toString());
         setBlock(result[1].toNumber());
-        console.log(result[0]);
-        console.log(result[1]);
+        console.log(result[0].toString());
+        console.log(result[1].toNumber());
       })
       .then((unsub) => {
         unsubscribe = unsub;
@@ -65,12 +66,6 @@ export function Main(props) {
     return () => unsubscribe && unsubscribe();
   }
 
-  // React hook to update the owner and block number information for a file.
-  useEffect(() => {
-    HashStage(accountPair.address, stage)
-    queryPoE();
-  }, [digest, api.query.templateModule]);
-
   // We can say a file digest is claimed if the stored block number is not 0.
   function isClaimed() {
     return block !== 0;
@@ -80,74 +75,99 @@ export function Main(props) {
     passwordInput.current = e.target.value
   }
 
-  function checkAccount() {
-    if (!accountPair || !accountPair.isLocked) {
-      return;
-    }
-
+  function checkAccount(e) {
+    setUnlocking(true);
     try {
       accountPair.decodePkcs8(passwordInput.current);
       setUnlockError(null)
+      setUnlocking(false);
     } catch (error) {
       console.log(error);
-      return setUnlockError('解锁失败，可能密码不正确，请重新尝试。');
+      setUnlockError('解锁失败，请更换密码重新尝试。');
+      setUnlocking(false);
     }
   }
-
 
   const PoEPanel = () => {
     return (
       <Message>
-        <Message.Header>版本内容的存证状态</Message.Header>
-        {digestOld &&
-          <p>{digestOld}</p>
-        }
-        {!digestOld &&
-          <p>之前的Hash值：{digestOld ? digestOld : '无'}</p>
-        }
+        <Message.Header>查验内容存证状态</Message.Header>
+        <p>
+          通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
+        </p>
         <Button onClick={queryPoE}>Hash</Button>
-        {digest &&
-          <p>当前的Hash值：{digest}</p>
+        {digest && isClaimed &&
+          <Message warning
+            icon='sync'
+            header='本内容没有在链上存证。'
+            content={digest}
+          />
+        }
+        {!isClaimed &&
+          <Message success
+            icon='check circle'
+            header='本内容已在链上存证。'
+            content={digest}
+          />
         }
 
-        <div>
-          {isClaimed &&
-            <Message success
-              icon='check circle'
-              header='本篇内容已在链上存证。'
-              content={digest}
+        {digest && isClaimed && accountPair.isLocked &&
+          <div>
+            <p>进行链上存证或撤消操作，需要解锁您的令牌（钱包）账号。</p>
+            <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
+              <input />
+              <Button type='submit' onClick={checkAccount} loading={unlocking}>解锁钱包账号</Button>
+            </Input>
+            {unlockError &&
+            <span style={{ marginLeft: 1 + 'rem', color: 'red' }}><Icon name='lock' /> {unlockError}</span>
+            }
+          </div>
+        }
+
+        {!unlockError && !accountPair.isLocked &&
+          <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
+        }
+
+        {!accountPair.isLocked &&
+          <div style={{ marginTop: 1 + 'rem' }}>
+            <TxButton
+              accountPair={accountPair}
+              color={'teal'}
+              label='撤消存证'
+              setStatus={setStatus}
+              type='SIGNED-TX'
+              disabled={!isClaimed()}
+              attrs={{
+                palletRpc: 'poe',
+                callable: 'revokeProof',
+                inputParams: [digest],
+                paramFields: [true]
+              }}
             />
-          }
-          <TxButton
-            accountPair={accountPair}
-            label='撤消存证'
-            setStatus={setStatus}
-            type='SIGNED-TX'
-            disabled={!isClaimed() || owner !== accountPair.address}
-            attrs={{
-              palletRpc: 'poe',
-              callable: 'revokeProof',
-              inputParams: [digest],
-              paramFields: [true]
-            }}
-          />
-          <TxButton
-            color={''}
-            accountPair={accountPair}
-            label={'提交存证'}
-            setStatus={setStatus}
-            type='SIGNED-TX'
-            disabled={isClaimed() || !digest}
-            attrs={{
-              palletRpc: 'poe',
-              callable: 'createProof',
-              inputParams: [digest],
-              paramFields: [true]
-            }}
-          />
-
-        </div>
-
+            <TxButton
+              color={'teal'}
+              accountPair={accountPair}
+              label={'提交存证'}
+              setStatus={setStatus}
+              type='SIGNED-TX'
+              disabled={isClaimed()}
+              attrs={{
+                palletRpc: 'poe',
+                callable: 'createProof',
+                inputParams: [digest],
+                paramFields: [true]
+              }}
+            />
+          </div>
+        }
+        {status &&
+          <Message positive>
+            <Message.Header></Message.Header>
+            <p>
+              {status}
+            </p>
+          </Message>
+        }
       </Message>
     )
   }
