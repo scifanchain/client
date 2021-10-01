@@ -14,6 +14,8 @@ import SpaceHome from './space/Home';
 import Stars from './Stars';
 import Community from './Community';
 import Expedition from './Expedition';
+
+import BlogHome from './blogs/Home';
 // import Test from './Test';
 
 // import 404 from './404'
@@ -25,6 +27,7 @@ export default function Content() {
       <Switch>
         <Route path='/sign-in' component={SignIn} />
         <Route path='/sign-up' component={SignUp} />
+        <Route path='/blogs' component={BlogHome} />
         <Route path='/profile' component={Profile} />
         <Route path='/finance' component={Finance} />
         <Route path='/galaxy' component={Galaxy} />

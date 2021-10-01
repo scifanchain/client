@@ -57,3 +57,11 @@ body {
 .menu-avatar {
   margin: 1rem auto !important;
 }
+
+#MaturityProgress {
+  margin: 0 !important;
+}
+
+.font-small {
+  font-size: small;
+}

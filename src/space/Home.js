@@ -110,7 +110,6 @@ export default function SpaceHome() {
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
-
         </Container>
     )
 }

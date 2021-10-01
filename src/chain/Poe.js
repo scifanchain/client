@@ -116,14 +116,14 @@ export function Main(props) {
             <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
               <input />
               <Button type='submit' onClick={checkAccount}>解锁钱包账号</Button>
-            </Input>
+          </Input>
+          {unlockError &&
+            <span style={{ marginLeft: 1 + 'rem', color: 'orange' }}><Icon name='lock' /> {unlockError}</span>
+          }
           </div>
         }
-        {unlockError &&
-          <span style={{ marginLeft: 1 + 'rem', color: 'red' }}><Icon name='lock' /> {unlockError}</span>
-        }
         {!unlockError && !accountPair.isLocked &&
-          <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
+          <span style={{ color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
         }
         {!accountPair.isLocked &&
           <div style={{ marginTop: 1 + 'rem' }}>
@@ -170,93 +170,6 @@ export function Main(props) {
   }
 
 
-  const PoEPanel2 = () => {
-    return (
-      <div>
-        {digest && activeItem === 'check' &&
-          <p>点击下面的Hash按钮，验证当前版本的内容是否已在链上存证。</p>
-        }
-        {!digest && activeItem === 'check' && !isClaimed &&
-          <p>当前版本的内容尚未存证。如果想在链上存证，请点击以下按钮Hash当前版本。</p>
-        }
-        {activeItem === 'check' && !isClaimed &&
-          <Button onClick={handlePoE}>Hash</Button>
-        }
-        {isClaimed &&
-          <div>
-            <Message success
-              icon='check circle'
-              header='本篇内容已在链上存证。'
-              content={digest}
-            />
-            <TxButton
-              accountPair={accountPair}
-              label='撤消存证'
-              setStatus={setStatus}
-              type='SIGNED-TX'
-              disabled={!isClaimed() || owner !== accountPair.address}
-              attrs={{
-                palletRpc: 'poe',
-                callable: 'revokeProof',
-                inputParams: [digest],
-                paramFields: [true]
-              }}
-            />
-          </div>
-        }
-        {isClaimed && digest && activeItem === 'unlock' &&
-          <div>
-            <div>本版本内容尚未存证。已根据现有内容生成以下Hash，请解锁账号后提交存证。</div>
-            <p style={{ color: 'Orange' }}>{digest}</p>
-            {accountPair.isLocked &&
-              <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
-                <input />
-                <Button type='submit' onClick={checkAccount}>解锁账号</Button>
-              </Input>
-            }
-            {unlockError &&
-              <span style={{ marginLeft: 1 + 'rem', color: 'red' }}>{unlockError}</span>
-            }
-            {!unlockError && !accountPair.isLocked &&
-              <span style={{ marginLeft: 1 + 'rem', color: 'green' }}><Icon name='lock open' /> 账号已解锁。</span>
-            }
-          </div>
-        }
-        {activeItem === 'poe' &&
-          <Form success={!!digest && !isClaimed()} warning={isClaimed()}>
-            <Form.Field>
-              <p>点击以下按钮即可提交当前版本到链上进行存证。存证的Hash内容由作品的内容、创作者、创作时间、更新时间、历史版本等构成，具有唯一性。作品存证后，即可得到适当的通证奖励（主网上线后）。</p>
-              <Button.Group>
-                <TxButton
-                  color={''}
-                  accountPair={accountPair}
-                  label={'提交存证'}
-                  setStatus={setStatus}
-                  type='SIGNED-TX'
-                  disabled={isClaimed() || !digest}
-                  attrs={{
-                    palletRpc: 'poe',
-                    callable: 'createProof',
-                    inputParams: [digest],
-                    paramFields: [true]
-                  }}
-                />
-              </Button.Group>
-            </Form.Field>
-            {/* Status message about the transaction. */}
-            {status &&
-              <Message positive>
-                <Message.Header></Message.Header>
-                <p>
-                  {status}
-                </p>
-              </Message>
-            }
-          </Form>
-        }
-      </div >
-    )
-  }
 
   // The actual UI elements which are returned from our component.
   return (

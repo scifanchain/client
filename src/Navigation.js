@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Menu, Image, Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
-import { Link } from 'react-router-dom'
+import { Link, useLocation  } from 'react-router-dom'
 
 import { useRecoilState } from 'recoil';
 import { usernameState } from './StateManager';
@@ -11,7 +11,8 @@ import config from './config';
 
 function Navigation() {
     // 导航图标激活样式
-    const [activeItem, setActiveItem] = useState('home')
+    const location = useLocation(); //URL路径
+    const [activeItem, setActiveItem] = useState(location.pathname.substr(1))
     const handleItemClick = (e, { name }) => {
         setActiveItem(name)
     };
@@ -30,23 +31,26 @@ function Navigation() {
             {/* <Image src={`${process.env.PUBLIC_URL}/assets/scifanchain_logo_black_white.png`} size='mini' /> */}
             <Menu.Item header as={Link} to='/'
                 name='home'
-                active={activeItem === 'home'}
+                active={activeItem === '/home'}
                 content="赛凡首页"
                 onClick={handleItemClick}>
             </Menu.Item>
             <Menu.Item as={Link} to='/works'
-                name='作品'
-                active={activeItem === '作品'}
+                name='works'
+                active={activeItem === 'works'}
+                content="作品"
                 onClick={handleItemClick}>
             </Menu.Item>
             <Menu.Item as={Link} to='/community'
-                name='社区'
-                active={activeItem === '社区'}
+                name='community'
+                active={activeItem === 'community'}
+                content="社区"
                 onClick={handleItemClick}>
             </Menu.Item>
             <Menu.Item as={Link} to='/blogs'
-                name='博客'
-                active={activeItem === '博客'}
+                name='blogs'
+                active={activeItem === 'blogs'}
+                content="博客"
                 onClick={handleItemClick}>
             </Menu.Item>
             {/* <Menu.Item as={Link} to='/era'
