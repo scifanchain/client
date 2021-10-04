@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Form, Button, Message, Icon, Input, Loader, } from 'semantic-ui-react';
 
 import { useSubstrate } from '../substrate-lib';
@@ -21,6 +21,7 @@ export function Main(props) {
   const [owner, setOwner] = useState('');
   const [block, setBlock] = useState(0);
   const [unlockError, setUnlockError] = useState(null);
+  const [isBusy, setIsBusy] = useState(false);
 
   const passwordInput = useRef('');
 
@@ -36,7 +37,6 @@ export function Main(props) {
     setDigest(hash);
     return hash;
   }
-
 
   // 链上查询
   const queryPoE = () => {
@@ -65,27 +65,41 @@ export function Main(props) {
     return () => unsubscribe && unsubscribe();
   }
 
+  const cancelPoE = () => {
+    setDigest('')
+  }
+
   // We can say a file digest is claimed if the stored block number is not 0.
   function isClaimed() {
     return block !== 0;
   }
 
   function getPassword(e) {
-    passwordInput.current = e.target.value
+    passwordInput.current = e.target.value;
   }
 
-  function checkAccount(e) {
-    try {
-      accountPair.decodePkcs8(passwordInput.current);
-      setUnlockError(null)
-    } catch (error) {
-      console.log(error);
-      setUnlockError('解锁失败，请更换密码重新尝试。');
+  const unlock = (
+    () => {
+      console.log(passwordInput.current)
+      if (!accountPair || !accountPair.isLocked) {
+        return;
+      }
+
+      setIsBusy(true);
+      setTimeout(() => {
+        try {
+          accountPair.decodePkcs8(passwordInput.current);
+          setUnlockError(null)
+        } catch (error) {
+          setIsBusy(false);
+          console.log(error);
+          return setUnlockError('解锁失败，请更换密码重新尝试。');
+        }
+
+        setIsBusy(false);
+      }, 0);
     }
-    finally {
-      console.log("completed");
-    }
-  }
+  );
 
   const PoEPanel = () => {
     return (
@@ -94,7 +108,10 @@ export function Main(props) {
         <p>
           通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
         </p>
-        <Button onClick={queryPoE}>Hash</Button>
+        <Button onClick={queryPoE} color='teal'>验证Hash值</Button>
+        {digest &&
+          <Button onClick={cancelPoE}>取消验证</Button>
+        }
         {digest && block === 0 &&
           <Message warning
             icon='sync'
@@ -113,13 +130,13 @@ export function Main(props) {
         {digest && isClaimed && accountPair.isLocked &&
           <div>
             <p>进行链上存证或撤消操作，需要解锁您的令牌（钱包）账号。</p>
-            <Input type='password' placeholder='令牌密码...' action ref={passwordInput} onChange={getPassword}>
+            <Input type='password' placeholder='令牌密码...' onChange={getPassword} action>
               <input />
-              <Button type='submit' onClick={checkAccount}>解锁钱包账号</Button>
-          </Input>
-          {unlockError &&
-            <span style={{ marginLeft: 1 + 'rem', color: 'orange' }}><Icon name='lock' /> {unlockError}</span>
-          }
+              <Button type='submit' onClick={unlock} loading={isBusy}>解锁账号</Button>
+            </Input>
+            {unlockError &&
+              <span style={{ marginLeft: 1 + 'rem', color: 'orange' }}><Icon name='lock' /> {unlockError}</span>
+            }
           </div>
         }
         {!unlockError && !accountPair.isLocked &&
