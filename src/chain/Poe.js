@@ -38,12 +38,10 @@ export function Main(props) {
     return hash;
   }
 
-  // 链上查询
+  // 链上验证
   const queryPoE = () => {
     const hash = hashStage(accountPair.address, stage);
-
     let unsubscribe;
-
     // Polkadot-JS API query to the `proofs` storage item in our pallet.
     // This is a subscription, so it will always get the latest value,
     // even if it changes.
@@ -65,6 +63,7 @@ export function Main(props) {
     return () => unsubscribe && unsubscribe();
   }
 
+  // 取消验证
   const cancelPoE = () => {
     setDigest('')
   }
@@ -74,17 +73,17 @@ export function Main(props) {
     return block !== 0;
   }
 
+  // 获取密码
   function getPassword(e) {
     passwordInput.current = e.target.value;
   }
 
+  // 解锁帐户
   const unlock = (
     () => {
-      console.log(passwordInput.current)
       if (!accountPair || !accountPair.isLocked) {
         return;
       }
-
       setIsBusy(true);
       setTimeout(() => {
         try {
@@ -101,97 +100,90 @@ export function Main(props) {
     }
   );
 
-  const PoEPanel = () => {
-    return (
-      <Message>
-        <Message.Header>查验内容存证状态</Message.Header>
-        <p>
-          通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
-        </p>
-        <Button onClick={queryPoE} color='teal'>验证Hash值</Button>
-        {digest &&
-          <Button onClick={cancelPoE}>取消验证</Button>
-        }
-        {digest && block === 0 &&
-          <Message warning
-            icon='sync'
-            header='本内容没有在链上存证。'
-            content={digest}
-          />
-        }
-        {block !== 0 &&
-          <Message success
-            icon='check circle'
-            header='本内容已在链上存证。'
-            content={digest}
-          />
-        }
-
-        {digest && isClaimed && accountPair.isLocked &&
-          <div>
-            <p>进行链上存证或撤消操作，需要解锁您的令牌（钱包）账号。</p>
-            <Input type='password' placeholder='令牌密码...' onChange={getPassword} action>
-              <input />
-              <Button type='submit' onClick={unlock} loading={isBusy}>解锁账号</Button>
-            </Input>
-            {unlockError &&
-              <span style={{ marginLeft: 1 + 'rem', color: 'orange' }}><Icon name='lock' /> {unlockError}</span>
-            }
-          </div>
-        }
-        {!unlockError && !accountPair.isLocked &&
-          <span style={{ color: 'green' }}><Icon name='lock open' /> 钱包账号已解锁。</span>
-        }
-        {!accountPair.isLocked &&
-          <div style={{ marginTop: 1 + 'rem' }}>
-            <TxButton
-              accountPair={accountPair}
-              color={'teal'}
-              label='撤消存证'
-              setStatus={setStatus}
-              type='SIGNED-TX'
-              disabled={!isClaimed()}
-              attrs={{
-                palletRpc: 'poe',
-                callable: 'revokeProof',
-                inputParams: [digest],
-                paramFields: [true]
-              }}
-            />
-            <TxButton
-              color={'teal'}
-              accountPair={accountPair}
-              label={'提交存证'}
-              setStatus={setStatus}
-              type='SIGNED-TX'
-              disabled={isClaimed()}
-              attrs={{
-                palletRpc: 'poe',
-                callable: 'createProof',
-                inputParams: [digest],
-                paramFields: [true]
-              }}
-            />
-          </div>
-        }
-        {status &&
-          <Message positive>
-            <Message.Header></Message.Header>
-            <p>
-              {status}
-            </p>
-          </Message>
-        }
-      </Message>
-    )
-  }
-
-
-
-  // The actual UI elements which are returned from our component.
   return (
-    <PoEPanel />
-  );
+    <Message>
+      <Message.Header>查验内容存证状态</Message.Header>
+      <p>
+        通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
+      </p>
+      <Button onClick={queryPoE} color='teal'>验证Hash值</Button>
+      {digest &&
+        <Button onClick={cancelPoE}>取消验证</Button>
+      }
+      {digest && block === 0 &&
+        <Message warning
+          icon='sync'
+          header='本版本的内容没有在链上存证。'
+          content={digest}
+        />
+      }
+      {block !== 0 && digest &&
+        <Message success
+          icon='check circle'
+          header='本版本内容已在链上存证。'
+          content={digest}
+        />
+      }
+
+      {digest && isClaimed && accountPair.isLocked &&
+        <div>
+          <p>进行链上存证或撤消操作，需要用令牌密码解锁您的令牌（钱包）账号。<br />
+            <span style={{ color: 'orange', fontSize: 1+ 'rem' }}>提醒：令牌密码是生成钱包时所设置的密码，与网站的登录密码不同。</span>
+          </p>
+          <Input type='password' placeholder='令牌密码...' onChange={getPassword} action>
+            <input />
+            <Button type='submit' onClick={unlock} loading={isBusy}>解锁令牌账号</Button>
+          </Input>
+          {unlockError &&
+            <span style={{ marginLeft: 1 + 'rem', color: 'orange', fontSize: 1 + 'rem' }}><Icon name='stop circle' /> {unlockError}</span>
+          }
+        </div>
+      }
+      {!unlockError && !accountPair.isLocked &&
+        <span style={{ color: 'green', fontSize: 1 + 'rem' }}><Icon name='lock open' /> 令牌账号已解锁。</span>
+      }
+      {!accountPair.isLocked &&
+        <div style={{ marginTop: 1 + 'rem' }}>
+          <TxButton
+            accountPair={accountPair}
+            color={'teal'}
+            label='撤消存证'
+            setStatus={setStatus}
+            type='SIGNED-TX'
+            disabled={!isClaimed()}
+            attrs={{
+              palletRpc: 'poe',
+              callable: 'revokeProof',
+              inputParams: [digest],
+              paramFields: [true]
+            }}
+          />
+          <TxButton
+            color={'teal'}
+            accountPair={accountPair}
+            label={'提交存证'}
+            setStatus={setStatus}
+            type='SIGNED-TX'
+            disabled={isClaimed()}
+            attrs={{
+              palletRpc: 'poe',
+              callable: 'createProof',
+              inputParams: [digest],
+              paramFields: [true]
+            }}
+          />
+        </div>
+      }
+      {status &&
+        <Message positive>
+          <Message.Header></Message.Header>
+          <p>
+            {status}
+          </p>
+        </Message>
+      }
+    </Message>
+  )
 }
 
 export default function Poe(props) {
