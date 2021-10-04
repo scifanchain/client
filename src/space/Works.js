@@ -23,11 +23,11 @@ export default function Works() {
                 // display the locked account statu
                 console.log(address, pair.isLocked);
             }
-               
+
             );
 
         });
-    },[])
+    }, [])
 
     return (
         <div>
@@ -45,7 +45,7 @@ export default function Works() {
                     onClick={handleItemClick}
                 />
             </Menu>
-            <Button as={Link} to={{ pathname: '/space/stage/create' }} style={{marginBottom: '2rem'}}>开始创作</Button>
+            <Button as={Link} to={{ pathname: '/space/stage/create' }} style={{ marginBottom: '2rem' }}>开始创作</Button>
             <StageList />
         </div>
     )

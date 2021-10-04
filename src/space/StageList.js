@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 import { Button, List, Icon, Pagination } from 'semantic-ui-react';
 import { get } from '../utils/Request';
@@ -62,7 +63,8 @@ export default function StageList() {
                 }>
                     {stage.title}
                 </List.Header>
-                <List.Description>{stage.created}</List.Description>
+                <p class='title-sub'>{moment(stage.created).format("YYYY年MM月DD日HH时mm分")}</p>
+                <List.Description>{stage.summary}</List.Description>
             </List.Content>
 
         </List.Item>

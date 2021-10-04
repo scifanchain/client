@@ -96,7 +96,7 @@ export default function SpaceHome() {
                         <Button size='tiny' onClick={changeAvatar} style={{margin: '1rem'}}>换头像</Button>
                         <SpaceMenu />
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={13}>
                         <Switch>
                             <Route path='/space/profile' component={Profile} />
                             <Route path='/space/works' component={Works} />
