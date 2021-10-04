@@ -102,7 +102,6 @@ export function Main(props) {
 
   return (
     <Message>
-      <Message.Header>查验内容存证状态</Message.Header>
       <p>
         通过加密之后的Hash(哈希)值来与链上存证数据比对，以查验当前内容是否在链上存证。
       </p>
